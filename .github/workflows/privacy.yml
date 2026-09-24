@@ -1,0 +1,74 @@
+# Correctness plus a server-side privacy tripwire. NOTE: CI runs *after* the
+# push, so the privacy gates cannot prevent a leak from reaching GitHub —
+# anything pushed stays retrievable by SHA.
+# Prevention is the pre-push hook. This exists because it is the only layer
+# that survives committing from a different directory or machine, and because
+# it gates the publication decision while the repo is still private.
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Keep minutes down: supersede in-flight runs on the same ref.
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history: the audit scans every revision
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Formatting
+        run: npm run format:check
+
+      - name: Tracked-tree privacy gate
+        run: node scripts/privacy-check.mjs
+
+      - name: Full-history publish audit
+        run: node scripts/publish-audit.mjs HEAD
+
+      - name: JavaScript tests
+        run: npm test
+
+      - name: Synthetic build
+        run: npm run build
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Hash-pinned per collectors/garmin/DEPENDENCY_REVIEW.md. No automatic upgrades.
+      - name: Install pinned Python dependencies
+        run: pip install --require-hashes -r collectors/garmin/requirements.lock
+
+      - name: Python tests
+        run: python -m pytest tests/test_collector.py tests/test_delivery.py -q
+
+      - name: Python lint
+        run: ruff check collectors tests
+
+      # Free for personal accounts; organisations require GITLEAKS_LICENSE.
+      # If this step ever fails on licensing, delete it: the two gates above
+      # are the blocking checks and do not depend on it.
+      - name: Credential scan (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

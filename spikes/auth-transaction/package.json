@@ -1,0 +1,14 @@
+{
+  "name": "yourset-auth-transaction-spike",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node run.mjs",
+    "test:running": "node test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.116.0",
+    "pg": "8.23.0",
+    "supabase": "2.117.0"
+  }
+}

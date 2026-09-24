@@ -1,0 +1,16 @@
+#!/bin/sh
+# LAST GATE before data leaves this machine.
+# Anything pushed to GitHub stays retrievable by SHA even after a force-push,
+# so this edge is irreversible in a way the commit boundary is not.
+set -e
+node scripts/privacy-check.mjs
+node scripts/publish-audit.mjs HEAD
+if command -v gitleaks >/dev/null 2>&1; then
+  if gitleaks git --help >/dev/null 2>&1; then
+    gitleaks git --redact --no-banner
+  else
+    gitleaks detect --redact --no-banner
+  fi
+else
+  printf 'privacy: gitleaks not installed; full-history credential scan limited.\n         brew install gitleaks\n'
+fi

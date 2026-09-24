@@ -1,0 +1,31 @@
+# Disposable product slice verification
+
+Development-only, macOS ARM at the versions in `docs/SUPPORTED_PLATFORM.md`. This is not a public installation path or a hosted migration procedure. The existing spike and its guard are not modified.
+
+`npm run test:product-slice` creates a fresh, fixed-name local service set, verifies actual published bindings, invokes the real `server.mjs` product entry point with ephemeral restricted-role configuration, and removes its disposable resources on completion. Existing product containers or volumes cause refusal rather than reuse. CLI state is ignored by Git; credential-bearing status output stays in memory. The independently authored `product-schema.sql` applies only inside this disposable setup, not as a product deployment migration.
+
+## Automated browser setup
+
+With the supported Node version and Docker Desktop engine running, run `npm ci`, then `npm run test:product-slice`. No installed Chrome, external Playwright module, account credentials or browser interaction is required. The first run downloads the pinned Playwright Docker image if absent; subsequent runs reuse the cached image. Network access is needed for initial dependency/image downloads. This is a local verification procedure, not the future product installation path.
+
+Playwright is an exact development dependency with a lockfile. `browser.mjs` pins its matching official browser image by version and digest. The runner starts a disposable browser container, verifies its actual loopback-only host binding, and checks real HTTP forwarding before starting Supabase. Only the two installed Playwright package directories are mounted, read-only; neither application configuration nor private files are mounted. The browser has a read-only root filesystem, temporary scratch space, no added capabilities, and runs as the image's non-root user. It is for this trusted synthetic test application only.
+
+The browser connects through the documented Playwright server protocol. Forwarding is restricted to the exact preflight port, then to `127.0.0.1:4187` for the product test. The product origin, cookie, CSP and existing browser assertions remain unchanged. The container's server listens internally on port 3000; Docker publishes it only to an ephemeral `127.0.0.1` port. The existing service binding guard also inspects the browser container. The runner removes the browser with the disposable services on completion, including test failure. Cached dependency packages and Docker images remain for reuse; no browser volume is created.
+
+If Docker is unavailable, image access is blocked, or browser preflight fails, the command exits unsuccessfully rather than silently switching to manual verification. Existing project containers or volumes must be investigated, not reused or indiscriminately deleted. Full clean-clone/CI and product installation gates remain separate.
+
+Service commands have a three-minute timeout. Browser creation and startup are separate so a startup failure can remove the already-created container. Each cleanup step is attempted even if another fails. An externally killed process or Docker crash can still leave resources behind; the next run refuses reuse. Investigate those exact disposable resources before rerunning rather than bypassing the guard.
+
+References: [Playwright Docker server](https://playwright.dev/docs/docker#remote-connection), [restricted network forwarding](https://playwright.dev/docs/api/class-browsertype#browser-type-connect-option-expose-network).
+
+## Historical manual adapter
+
+`YOURSET_EXTERNAL_BROWSER=1` retains the earlier explicit agent-operated desktop-browser adapter for diagnosis. It is not the automated default and is not CI evidence. `YOURSET_PLAYWRIGHT_MODULE` is no longer used. Native macOS headless Chromium remains blocked by the current desktop process sandbox; the default uses the disposable Linux ARM browser inside Docker.
+
+In external-browser mode, a temporary loopback helper at port 4188 sets an HttpOnly synthetic session cookie and redirects to the actual product at port 4187. The session was established with real local Auth and TOTP. The helper does not bypass product admission. No credential is included in a URL or printed. An operator verifies the UI save, fresh-document restoration, and visible error after a deliberately broken lookup, while the test verifies durable row counts and sanitized transaction metadata. POST markers `/saved`, `/reloaded`, `/break` and `/failed` coordinate those observations; they are test helpers, not product endpoints. Both servers terminate and all synthetic identities/resources are removed afterward.
+
+All four private command routes (combined target/decision, standalone plan, decision-only and review completion) write durable product storage. The dashboard reads the authenticated owner's evidence, saved plans and decision summaries. The synthetic demo keeps its separate tab-local workflow. The private runtime now also includes password login, TOTP enrollment/challenge, session status, refresh and logout; see `docs/AUTH_CONTRACT.md`. Synthetic identity enrollment in the allowed-owner table remains privileged test setup, while browser login and session creation use ordinary product routes.
+
+`npm run test:auth` runs the separate authentication suite through the same guarded launcher and disposable browser. It covers real product login/MFA, private save, two identities, restart, concurrent refresh across two server processes, fail-closed refresh, key loss/rotation, expiry, logout and account switching. Its separate test relay injects upstream outages and records no credentials or payloads. It never replaces a successful Auth response with a fabricated identity. The original product-slice assertions are unchanged and remain a separate regression gate.
+
+The local DDL is still disposable setup, not a production migration. Password/authenticator recovery, hosted setup, production key custody, connectors and persistent installation are not ready. Server-owned upstream-signout retries run only while the local product process is alive; they resume from stored state on restart, stop after five attempts, and require operator investigation if exhausted. No operating-system schedule is installed.

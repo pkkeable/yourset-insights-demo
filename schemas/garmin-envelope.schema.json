@@ -1,0 +1,575 @@
+{
+  "$defs": {
+    "Activity": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "activity",
+          "default": "activity",
+          "title": "Kind",
+          "type": "string"
+        },
+        "activity_id": {
+          "title": "Activity Id",
+          "type": "string"
+        },
+        "sport": {
+          "title": "Sport",
+          "type": "string"
+        },
+        "start_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Utc"
+        },
+        "elapsed_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Elapsed Seconds"
+        },
+        "timer_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timer Seconds"
+        },
+        "moving_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Moving Seconds"
+        },
+        "distance_m": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance M"
+        },
+        "avg_hr_bpm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Avg Hr Bpm"
+        },
+        "max_hr_bpm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Hr Bpm"
+        },
+        "avg_power_w": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Avg Power W"
+        },
+        "expenditure_estimate_kcal": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expenditure Estimate Kcal"
+        },
+        "training_effect_aerobic": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Training Effect Aerobic"
+        },
+        "training_effect_anaerobic": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Training Effect Anaerobic"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        },
+        "is_parent": {
+          "default": false,
+          "title": "Is Parent",
+          "type": "boolean"
+        },
+        "strength_context": {
+          "default": false,
+          "title": "Strength Context",
+          "type": "boolean"
+        },
+        "origin": {
+          "default": "unknown",
+          "enum": ["unknown", "garmin", "excluded_strava"],
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": ["activity_id", "sport"],
+      "title": "Activity",
+      "type": "object"
+    },
+    "Metric": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "daily_metric",
+          "default": "daily_metric",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_key": {
+          "enum": [
+            "hrv_nightly_mean",
+            "hrv_weekly_mean",
+            "hrv_baseline_low",
+            "hrv_baseline_high",
+            "resting_hr"
+          ],
+          "title": "Metric Key",
+          "type": "string"
+        },
+        "value_number": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value Number"
+        },
+        "unit": {
+          "enum": ["ms", "bpm"],
+          "title": "Unit",
+          "type": "string"
+        },
+        "definition": {
+          "title": "Definition",
+          "type": "string"
+        }
+      },
+      "required": ["metric_key", "value_number", "unit", "definition"],
+      "title": "Metric",
+      "type": "object"
+    },
+    "Series": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "activity_series",
+          "default": "activity_series",
+          "title": "Kind",
+          "type": "string"
+        },
+        "activity_id": {
+          "title": "Activity Id",
+          "type": "string"
+        },
+        "sampling_class": {
+          "const": "chart",
+          "default": "chart",
+          "title": "Sampling Class",
+          "type": "string"
+        },
+        "requested_limit": {
+          "default": 2000,
+          "title": "Requested Limit",
+          "type": "integer"
+        },
+        "sample_count": {
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "suspected_truncation": {
+          "title": "Suspected Truncation",
+          "type": "boolean"
+        },
+        "channels": {
+          "additionalProperties": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "propertyNames": {
+            "enum": [
+              "directTimestamp",
+              "sumElapsedDuration",
+              "directHeartRate",
+              "sumDistance",
+              "directSpeed",
+              "directPower",
+              "directRunCadence"
+            ]
+          },
+          "title": "Channels",
+          "type": "object"
+        },
+        "units": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "directTimestamp",
+              "sumElapsedDuration",
+              "directHeartRate",
+              "sumDistance",
+              "directSpeed",
+              "directPower",
+              "directRunCadence"
+            ]
+          },
+          "title": "Units",
+          "type": "object"
+        },
+        "limitation": {
+          "default": "Chart series; native resolution and channel units require account verification.",
+          "title": "Limitation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "activity_id",
+        "sample_count",
+        "suspected_truncation",
+        "channels",
+        "units"
+      ],
+      "title": "Series",
+      "type": "object"
+    },
+    "Sleep": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "sleep_session",
+          "default": "sleep_session",
+          "title": "Kind",
+          "type": "string"
+        },
+        "asleep_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asleep Seconds"
+        },
+        "start_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Utc"
+        },
+        "end_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Utc"
+        },
+        "wake_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wake Date"
+        },
+        "session_class": {
+          "default": "main",
+          "enum": ["main", "nap", "unknown"],
+          "title": "Session Class",
+          "type": "string"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "date_ambiguity": {
+          "default": false,
+          "title": "Date Ambiguity",
+          "type": "boolean"
+        }
+      },
+      "title": "Sleep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "collector_id": {
+      "format": "uuid",
+      "title": "Collector Id",
+      "type": "string"
+    },
+    "record_type": {
+      "enum": ["daily_metric", "sleep_session", "activity", "activity_series"],
+      "title": "Record Type",
+      "type": "string"
+    },
+    "source_record_key": {
+      "title": "Source Record Key",
+      "type": "string"
+    },
+    "revision_no": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Revision No",
+      "type": "integer"
+    },
+    "normalized_hash": {
+      "default": "",
+      "pattern": "^([0-9a-f]{64})?$",
+      "title": "Normalized Hash",
+      "type": "string"
+    },
+    "provider": {
+      "const": "garmin",
+      "default": "garmin",
+      "title": "Provider",
+      "type": "string"
+    },
+    "provider_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Date"
+    },
+    "observed_at_utc": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed At Utc"
+    },
+    "source_updated_at_utc": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Updated At Utc"
+    },
+    "fetched_at_utc": {
+      "format": "date-time",
+      "title": "Fetched At Utc",
+      "type": "string"
+    },
+    "source_timezone": {
+      "title": "Source Timezone",
+      "type": "string"
+    },
+    "adapter_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Adapter Version",
+      "type": "string"
+    },
+    "upstream_version": {
+      "const": "0.3.15",
+      "default": "0.3.15",
+      "title": "Upstream Version",
+      "type": "string"
+    },
+    "data": {
+      "discriminator": {
+        "mapping": {
+          "activity": "#/$defs/Activity",
+          "activity_series": "#/$defs/Series",
+          "daily_metric": "#/$defs/Metric",
+          "sleep_session": "#/$defs/Sleep"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Metric"
+        },
+        {
+          "$ref": "#/$defs/Sleep"
+        },
+        {
+          "$ref": "#/$defs/Activity"
+        },
+        {
+          "$ref": "#/$defs/Series"
+        }
+      ],
+      "title": "Data"
+    },
+    "field_status": {
+      "additionalProperties": {
+        "enum": [
+          "available",
+          "valid_empty",
+          "not_observed_in_window",
+          "pending_sync",
+          "not_requested",
+          "unsupported_confirmed",
+          "reauth_required",
+          "rate_limited",
+          "fetch_error",
+          "schema_mismatch"
+        ],
+        "type": "string"
+      },
+      "title": "Field Status",
+      "type": "object"
+    }
+  },
+  "required": [
+    "collector_id",
+    "record_type",
+    "source_record_key",
+    "fetched_at_utc",
+    "source_timezone",
+    "data",
+    "field_status"
+  ],
+  "title": "Envelope",
+  "type": "object"
+}

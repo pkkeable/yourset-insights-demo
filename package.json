@@ -1,0 +1,35 @@
+{
+  "name": "yourset-insights",
+  "version": "0.1.0",
+  "description": "Turn health and training data into decisions: a deterministic metric engine with explicit completeness, source lineage and dated targets, demonstrated on synthetic data.",
+  "author": "Preston Keable <255617622+pkkeable@users.noreply.github.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "check": "node --check src/metrics.mjs && node --check web/app.mjs && npm run format:check && npm run privacy && npm test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "privacy": "node scripts/privacy-check.mjs",
+    "audit:history": "node scripts/publish-audit.mjs",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "test:product-slice": "node dev/local/run.mjs",
+    "test:auth": "node dev/local/run.mjs auth",
+    "test:demo": "node dev/local/demo.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.116.0",
+    "pg": "8.23.0"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0",
+    "prettier": "3.9.8",
+    "supabase": "2.117.0"
+  }
+}

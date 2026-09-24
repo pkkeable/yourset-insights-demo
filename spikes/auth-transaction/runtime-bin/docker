@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+// Development-only: not part of any documented install path.
+// Replace before the Phase 2 clean-clone rehearsal.
+// Explicit loopback publishing for the spike and Phase 1 local product only.
+// No inspection response rewriting and no changes to other Docker commands/projects.
+import path from 'node:path';
+import {realpathSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+const args=process.argv.slice(2),real=process.env.YOURSET_SPIKE_DOCKER_BIN;
+if(!real||!path.isAbsolute(real)||realpathSync(real)===realpathSync(process.argv[1])){console.error('Missing real Docker binary');process.exit(1);}
+const nameAt=args.indexOf('--name');
+const name=nameAt>=0?args[nameAt+1]:args.find(x=>x.startsWith('--name='))?.slice(7);
+if(['create','run'].includes(args[0])&&/^supabase_[a-z_]+_(?:yourset-auth-spike|yourset-insights)$/.test(name??'')){
+  for(let i=0;i<args.length;i++){
+    if(args[i]==='-p'||args[i]==='--publish'){
+      const mapping=args[i+1];
+      if(!/^\d+:\d+(?:\/(?:tcp|udp))?$/.test(mapping)){console.error('Unsupported spike port mapping');process.exit(1);}
+      args[++i]=`127.0.0.1:${mapping}`;
+    }
+  }
+}
+const result=spawnSync(real,args,{stdio:'inherit'});
+process.exit(result.status??1);

@@ -1,0 +1,403 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "d9a103adceccb2d1676a7f6e0c0586ceb2981366",
+  "historyCopied": false,
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "5bca44d270b8705d985ef43ac609366d168ef31e7204584aa60881910c1d8a04"
+    },
+    {
+      "path": ".githooks/pre-commit",
+      "sha256": "76412716b776ec99ef759b47e6685f1f85a74e996f42afcb1714544808cefcd6"
+    },
+    {
+      "path": ".githooks/pre-push",
+      "sha256": "dd79ef037bd779ff304b5dd554b008a1e7b0c7fd164fe9eae5dee64b38b1bead"
+    },
+    {
+      "path": ".github/workflows/privacy.yml",
+      "sha256": "993d4d118b72aa64eb4a5bc292569b1a08392c0152fbbf73fb10f47db1c204f8"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "aaeed73571d2690e1573d5ecf0d1851223a5ca8504492806b41c491e33e3cecf"
+    },
+    {
+      "path": ".prettierignore",
+      "sha256": "014c1af9e5dbb753d939e6079886b23907b83cbcd91d51d2afc679c9f28cffb7"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "0d0e18fadda73c16221bd1853a49c845cda487141666642b28cb9cdca8f2547d"
+    },
+    {
+      "path": "ENGINEERING.md",
+      "sha256": "fe74f77b43c4a3c9ca0d55d2bad20afd9edd54b9b1965f6858541e75af807ff4"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3c6420787a04c0dd3589b89b46f0bd1919849e6690124feb783bd6b30be92ebd"
+    },
+    {
+      "path": "adapters/intake.mjs",
+      "sha256": "fc2376c131a81ccd9162e9cbb7704c937241de855688de596d0ddd11e8fe1af1"
+    },
+    {
+      "path": "collectors/garmin/DEPENDENCY_REVIEW.md",
+      "sha256": "848ef95e2bf055f9d8dc69ae85e043abc9b04baceb7ea3216669797785da4d23"
+    },
+    {
+      "path": "collectors/garmin/artifact-hashes.json",
+      "sha256": "6b413f94bd64433413821384dda4147051903f8a7b4bf9d1c6cea4580c2b792c"
+    },
+    {
+      "path": "collectors/garmin/cli.py",
+      "sha256": "db45ae88a617ac6f5d6052281459dde5cc30bba2baa9e7b17ae5975ecd9d189a"
+    },
+    {
+      "path": "collectors/garmin/delivery.py",
+      "sha256": "222c14e0b4da548927e2b4c31cd0013f4c76f272f3d4aa79a2d07829fff7d9c5"
+    },
+    {
+      "path": "collectors/garmin/export.py",
+      "sha256": "b7e5441513a347a09ea560c072f6cc4e0a6e94708bf71acf57e1a2ccd03193ac"
+    },
+    {
+      "path": "collectors/garmin/models.py",
+      "sha256": "500d7c29e58f0f277564da89066ae99f153389148653c3c0ea0199ca26cc0987"
+    },
+    {
+      "path": "collectors/garmin/normalize.py",
+      "sha256": "565a0f9af32a97c9abbf4c5a87dd42da11acfa070d63965dbf36083ccae7f731"
+    },
+    {
+      "path": "collectors/garmin/provider.py",
+      "sha256": "9e06ae124546964ac761e4c1ca09a9f7ddb4dad641d308b39be7980f0888ec2f"
+    },
+    {
+      "path": "collectors/garmin/requirements.in",
+      "sha256": "fdef9454fa5b6ac9f2161edde1c74911bfed9a95c6c6fd5618e36f6eb7edb361"
+    },
+    {
+      "path": "collectors/garmin/requirements.lock",
+      "sha256": "bf465bee4fb88b94cd1ee5bc71f0c4f11882d9634accd097ab649088525cb32f"
+    },
+    {
+      "path": "collectors/garmin/security.py",
+      "sha256": "55c7d9d5af00985ecc2b6667eec58c460fbcbdffce30f4cf3b91f1c5fe778097"
+    },
+    {
+      "path": "collectors/garmin/store.py",
+      "sha256": "b6fedff32d79ebeb44c314d2657bf4ec7d85fa5a182603e868fb8f510b200918"
+    },
+    {
+      "path": "dev/local/README.md",
+      "sha256": "9f378cd472979e192c9c58dfa917465b77ba24f9e886a4fd65433b844a34de67"
+    },
+    {
+      "path": "dev/local/browser.mjs",
+      "sha256": "2223dee8135db61d79e2672ce884cdae75e357781b8de76f83966f6846465df8"
+    },
+    {
+      "path": "dev/local/demo.mjs",
+      "sha256": "0435126f99b5790a8b558454ae5af6c290864d3ced93ccf9464920d1dd472c58"
+    },
+    {
+      "path": "dev/local/product-schema.sql",
+      "sha256": "b96de94de8398e4ed669e29f2ae6b20576800fad205664b28649642fafb1c676"
+    },
+    {
+      "path": "dev/local/run.mjs",
+      "sha256": "86cadb7078286ea673421d1eb2b68910896c9b051f379496fdc66e8e520b8fee"
+    },
+    {
+      "path": "dev/local/supabase/.gitignore",
+      "sha256": "507699eb91144818edf61d3a079212cacf31d8db520eae428e3b48fcf0d6919c"
+    },
+    {
+      "path": "dev/local/supabase/config.toml",
+      "sha256": "84de2d960d36ccd977c4dfcdc755a0366e075e2b71542533674369e38f9b851f"
+    },
+    {
+      "path": "docs/AUTH_CONTRACT.md",
+      "sha256": "40749b3409edcd22686d1470e958f79a3ae03241d46f1eff47b13b3913db52c9"
+    },
+    {
+      "path": "docs/CAPABILITIES.md",
+      "sha256": "f6f64b9a3c7d9096fadf00be62b832a0e2dc6a89d615cfbb947d5d14d665f6b8"
+    },
+    {
+      "path": "docs/COMMAND_CONTRACTS.md",
+      "sha256": "5f4376a586102ef22587d6d512e5557b5909f56d35d78440cb95356d8a3d60a2"
+    },
+    {
+      "path": "docs/DATA_CONTRACT.md",
+      "sha256": "25be09854844a24c084f7a6c729c74ac4604b2cae8ca8492872ff95406adc3d0"
+    },
+    {
+      "path": "docs/DESIGN.md",
+      "sha256": "2ff7eb42d3898e4ffbc21d262845776324d31c60111ec619783151be69be94c7"
+    },
+    {
+      "path": "docs/METRICS.md",
+      "sha256": "0ac49d9558677bd5f980f5288d2eb073e83c37f3222c1a735d33f539bd817837"
+    },
+    {
+      "path": "docs/PRIVACY_WORKFLOW.md",
+      "sha256": "6a0556c42a263d32b3e7ec65e6d9f1d50545c7e38eac0237c90aa3bba030f682"
+    },
+    {
+      "path": "docs/PUBLICATION.md",
+      "sha256": "1a5228d869069d6cf8fa8a69fd52901509a0c8c442b1740cca181581fc319d4e"
+    },
+    {
+      "path": "docs/RELEASE_CHECKS.md",
+      "sha256": "5856c7f4f2b17e733af726ac3e9f6ce30c646ee80f0de8458ff11bcf2c6588d3"
+    },
+    {
+      "path": "docs/RUNBOOK.md",
+      "sha256": "24f58773694076d250b568bd5136bee6b1add77ae357a8d0f32a5c627ccaeecc"
+    },
+    {
+      "path": "docs/SOURCES.md",
+      "sha256": "f838ddd5066236c18e3cccf2e4c262d476aad13127a1f6deaa6b81bd5f6348bb"
+    },
+    {
+      "path": "docs/SUPPORTED_PLATFORM.md",
+      "sha256": "7f893faa5d5a253339c4b4fc34ce3a75e7f0b9ea2289c496bc54c0f01bf9698d"
+    },
+    {
+      "path": "docs/adr/0001-write-and-session-boundary.md",
+      "sha256": "3901dea185822ce5d6831755a1e95c49c2fb8ffe8066b63d5468e4e62c49963c"
+    },
+    {
+      "path": "docs/images/overview.png",
+      "sha256": "888f04c7a6c27a36b507860d67f4435953f678d24100e97a8f579a1741fe33ee"
+    },
+    {
+      "path": "docs/release-files.txt",
+      "sha256": "7ae450c6aaf48753b85c3da0cd9be7a34eb46a266c331bbb798b7927c34ee13b"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "d304e646e43ec221ebd29690723b17724530f383d3b16549c26531bcb6357399"
+    },
+    {
+      "path": "package.json",
+      "sha256": "e68521f5273ab327788ef5db2e5aa97fc9c8f98adb57be9ed74e5aecb2fbe28d"
+    },
+    {
+      "path": "private-api/auth.mjs",
+      "sha256": "e39773128bfcfbd3aa59a47100a211efd3d844fb3091b5542ae578b4f013721a"
+    },
+    {
+      "path": "private-api/commands.mjs",
+      "sha256": "7d8766878e8c2ee589fa2ff85d0cbdf8c13b55c767f3e1c36e345e1662679aa5"
+    },
+    {
+      "path": "private-api/config.mjs",
+      "sha256": "26ad8fba029efdb611c8c8b013708eb3220ba723e01f40ff5268a8db51532ab3"
+    },
+    {
+      "path": "private-api/dashboard.mjs",
+      "sha256": "858a42bb3702471dbdb7ea772a617b68ef7e968d00f694b0f00591d03d5b6025"
+    },
+    {
+      "path": "private-api/deadlines.mjs",
+      "sha256": "df1e49854683b368bdc20ae08074dc877cb31f2e456ac3889730463e3dfca121"
+    },
+    {
+      "path": "private-api/plan-model.mjs",
+      "sha256": "07f8a709b6bb7c03ddc56815b87a961c61065dec9f81f809ee638d5cf61fdd7e"
+    },
+    {
+      "path": "private-api/runtime.mjs",
+      "sha256": "11d097095e76ec27d2c6e9efaf7d82957a5e21da27e4de1c695ff053b21ba93b"
+    },
+    {
+      "path": "schemas/garmin-envelope.schema.json",
+      "sha256": "2cb60edffa28ececb92edac15a16c85776a360e86df9c5cc303ecb390df3c6e6"
+    },
+    {
+      "path": "scripts/build.mjs",
+      "sha256": "4e40336f20c2ebe69b39f4fd2bcf767e86bb2c833054c0b7cb8099281042d0be"
+    },
+    {
+      "path": "scripts/export-source.mjs",
+      "sha256": "f1a9cecaa98ce92a1e88659a820c43013b2b798dd3afd80aaf4729b43e9c54b6"
+    },
+    {
+      "path": "scripts/privacy-check.mjs",
+      "sha256": "60222837abfd027b4f83b5247e57d5251d508b2008c22e47c7eda458d42ed1c9"
+    },
+    {
+      "path": "scripts/publish-audit.mjs",
+      "sha256": "acc8f3c85fd00ebb902eaa0808ba57b9fc6cbdbabc2b50e54e5a2c1533d944bb"
+    },
+    {
+      "path": "server.mjs",
+      "sha256": "887fa3a062c6ada4bb94f7ce22555cc10207378f91c99c9b0d26f0888d822576"
+    },
+    {
+      "path": "spikes/auth-transaction/.gitignore",
+      "sha256": "93179d650f942f06ca09df31c8cec3bf7cd93e28a498fb6136a55e30787bb51f"
+    },
+    {
+      "path": "spikes/auth-transaction/README.md",
+      "sha256": "eaea74312c4e5bbf4ca68d6dfa8e188c54a69e2473f0b58d73436f4e9cb58fd2"
+    },
+    {
+      "path": "spikes/auth-transaction/app.mjs",
+      "sha256": "5499f5ae727f1e5d43df37b5a260944f625443fbec5a05c8f72e28edf74eb9da"
+    },
+    {
+      "path": "spikes/auth-transaction/measurements.mjs",
+      "sha256": "57077627bbdeb4ddabc16239f811fd8e2d73ebf20adf7aafda91892d7a5b0d2e"
+    },
+    {
+      "path": "spikes/auth-transaction/package-lock.json",
+      "sha256": "34986702b3ec966f117e257d89db0682f0f681210a79f8d8fd7defe282d7d1f2"
+    },
+    {
+      "path": "spikes/auth-transaction/package.json",
+      "sha256": "1130f238d4ee4b2f36e33c0cc314d60f1149f5533ef8a208ddb71274c2f99290"
+    },
+    {
+      "path": "spikes/auth-transaction/run.mjs",
+      "sha256": "a80e63cb2ef643a4199ff550133cf2c22611f29d9cc450bcc99e7f4ea34cb5e5"
+    },
+    {
+      "path": "spikes/auth-transaction/runtime-bin/docker",
+      "sha256": "4b0ed34d0b4477401eb75998cc91a2f3cec7d61ed205d97199d026fe9ffa9103"
+    },
+    {
+      "path": "spikes/auth-transaction/schema.sql",
+      "sha256": "ebb7b59da54b129bc25fb3355f0c950afabd1ccc5a2fc6efdab3e62ef9fced45"
+    },
+    {
+      "path": "spikes/auth-transaction/supabase/.gitignore",
+      "sha256": "507699eb91144818edf61d3a079212cacf31d8db520eae428e3b48fcf0d6919c"
+    },
+    {
+      "path": "spikes/auth-transaction/supabase/config.toml",
+      "sha256": "e7fb239b756b1a743bc59913595674e00b9dd1abae8a06976e0579966f73dbc1"
+    },
+    {
+      "path": "spikes/auth-transaction/test.mjs",
+      "sha256": "7737220594e543a322257d40c6829a79cf820d0aa7efcb1e3a9c9da595fc2857"
+    },
+    {
+      "path": "src/metrics.mjs",
+      "sha256": "44e6cc8638107c90b4337ebebbaf6787e64f0150447c9bc539a35ace9f04bde5"
+    },
+    {
+      "path": "src/overview.mjs",
+      "sha256": "c66fb0181d844e0ec4a42b6fdc4e04a732e0095e97895fd7ba214641a0ac9dbd"
+    },
+    {
+      "path": "src/scenarios.mjs",
+      "sha256": "378d2dfa8a0de6b1d42b640d033d7967e67d431d8f7dd15e3747d1b95cac3a77"
+    },
+    {
+      "path": "supabase/migrations/20260912162736_private_landing.sql",
+      "sha256": "97e30390b127dee995af49e05b07059122e2ce5df1e61fa7d317ea5441b343aa"
+    },
+    {
+      "path": "tests/adapters.test.mjs",
+      "sha256": "94fba883c0c3056679339dbc056864dfaf3eac19c3c90cdd36e6311a6e5a439f"
+    },
+    {
+      "path": "tests/auth-session.test.mjs",
+      "sha256": "91ef5fa327867e750de088199551a9a3dd1f0928307d84b71c7cb032730cb882"
+    },
+    {
+      "path": "tests/dashboard.test.mjs",
+      "sha256": "c3ffb3338ee79418673af4a696b4604ba226572a9df75ea0da3fe752074907b6"
+    },
+    {
+      "path": "tests/design.test.mjs",
+      "sha256": "b046731387cd3712ee6a776ccab1793f1c924dc80f7e654760664c344895489b"
+    },
+    {
+      "path": "tests/long-horizon.test.mjs",
+      "sha256": "df4d15b9de013499ed3191e80ead8e949a3a7ede3b5146e90ede55ee9c55772f"
+    },
+    {
+      "path": "tests/metrics.test.mjs",
+      "sha256": "beba9582a0eecc2450e775a5c9a46fe0010a77ecccdf911780492f2207f05532"
+    },
+    {
+      "path": "tests/overview.test.mjs",
+      "sha256": "6f36d0b66027cbd974120486a13682f129a337267df265ae3f77bed77076109d"
+    },
+    {
+      "path": "tests/private-boundary.test.mjs",
+      "sha256": "37821d00f61eca1382ae264ce62b83ff40fb75a17ec36cbcbc332e10d1f75c8f"
+    },
+    {
+      "path": "tests/product-slice/auth.mjs",
+      "sha256": "1a9e3a291fe9d66e662205ce94d60810ee26b9846f8a3b9064e2c9ccd9b34ebc"
+    },
+    {
+      "path": "tests/product-slice/slice.mjs",
+      "sha256": "e47b7aa6ef6e8781dc43c196c3f04a0842201e75e8a0c337d5998720062eca46"
+    },
+    {
+      "path": "tests/product-slice/workflow.mjs",
+      "sha256": "141aa5a38fca155b12ecfced294b5564263371fe8af2c09aedde8bbf51763453"
+    },
+    {
+      "path": "tests/product.test.mjs",
+      "sha256": "f18d4b3da9edf2454fe53a15190e9f1e0a3d3c48eb75778d6723e403f9afb72a"
+    },
+    {
+      "path": "tests/server.test.mjs",
+      "sha256": "73c4dd1ce6ce97fe55a3f2f3bc7058c127ea8bd687833840f0b7c024eacc9117"
+    },
+    {
+      "path": "tests/test_collector.py",
+      "sha256": "247d511bad5ef297e892e312373584a96310209324ef5358b5db4689504fa80b"
+    },
+    {
+      "path": "tests/test_delivery.py",
+      "sha256": "58f548cfeaf1b08aa2d7228a36b5960367c015a9753003847657adc15ed8a6be"
+    },
+    {
+      "path": "web/app.mjs",
+      "sha256": "2d393e0c53a2548e63766ad638666b4c4f3017ee671581c0f1eccca18248daa2"
+    },
+    {
+      "path": "web/assets/DM-Sans-OFL.txt",
+      "sha256": "6fbd040a29c2037a765dfb9f2561e9965b5c95c6dcb5dce516089d63d5f17af7"
+    },
+    {
+      "path": "web/assets/JetBrains-Mono-OFL.txt",
+      "sha256": "403581b69dac5cff4079205e01c6b467e56af449ecbd7247693ddb1baafa005b"
+    },
+    {
+      "path": "web/assets/dm-sans.woff2",
+      "sha256": "9fea608a947e67020c33cad9a6fe3d60c54119dfb8cff87768a8117a15ed7543"
+    },
+    {
+      "path": "web/assets/jetbrains-mono.woff2",
+      "sha256": "18be452724bfdc236c074ca94a249a7f41a86752c7d04ab258ce9ed5651f6a7e"
+    },
+    {
+      "path": "web/assets/yourset-logo.svg",
+      "sha256": "d0ac0fca0e3829316a18e01b95bcdafcd75e1790a4fdee9d0ab7837190a7ff3e"
+    },
+    {
+      "path": "web/index.html",
+      "sha256": "65be95f45a18571d88f12abfbec424caf91677b6e54a37939d159c880b745fa6"
+    },
+    {
+      "path": "web/overview-view.mjs",
+      "sha256": "797d8e54bc700577df068d671a204e549df149ab118288b51b571f56eb0a1432"
+    },
+    {
+      "path": "web/style.css",
+      "sha256": "e8f29facc09e02f9cb738ba6238760c5a081dd3f521c5f8cf7ab9c10417ff787"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+#!/bin/sh
+# Keeps private material out of LOCAL history, so a rewrite is never needed.
+# Convenience layer: bypassable with --no-verify. pre-push is the real gate.
+set -e
+node scripts/privacy-check.mjs
+if command -v gitleaks >/dev/null 2>&1; then
+  if gitleaks git --help >/dev/null 2>&1; then
+    gitleaks git --staged --redact --no-banner
+  else
+    gitleaks protect --staged --redact --no-banner
+  fi
+else
+  printf 'privacy: gitleaks not installed; credential scan limited to built-in patterns.\n         brew install gitleaks\n'
+fi

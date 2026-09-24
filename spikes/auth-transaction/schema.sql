@@ -1,0 +1,23 @@
+-- Disposable local spike only. Never deploy this setup script to a hosted project.
+create schema spike;
+revoke all on schema spike from public, anon, authenticated;
+create role yourset_spike_app login noinherit;
+create role yourset_spike_auth login noinherit;
+grant usage on schema spike to yourset_spike_app, yourset_spike_auth;
+create table spike.plans(owner uuid not null, version integer not null check(version>0), target integer not null check(target between 1 and 10000), primary key(owner,version));
+create table spike.decisions(owner uuid not null, id uuid not null, plan_version integer not null, reason text not null check(length(reason) between 1 and 500), primary key(owner,id), foreign key(owner,plan_version) references spike.plans(owner,version));
+create table spike.receipts(owner uuid not null, key uuid not null, digest text not null, result jsonb not null, primary key(owner,key));
+create table spike.sessions(hash text primary key, owner uuid not null, upstream uuid not null, sealed text not null, expires timestamptz not null, revoked boolean not null default false);
+create table spike.allowed(owner uuid primary key);
+grant select,insert on spike.plans,spike.decisions,spike.receipts to yourset_spike_app;
+grant select,insert,update on spike.sessions to yourset_spike_auth;
+grant select on spike.allowed to yourset_spike_auth;
+create function spike.session_valid(sid uuid, uid uuid) returns boolean language sql security definer set search_path='' as $$ select exists(select 1 from auth.sessions where id=sid and user_id=uid) $$;
+revoke all on function spike.session_valid(uuid,uuid) from public,anon,authenticated;
+grant execute on function spike.session_valid(uuid,uuid) to yourset_spike_auth;
+alter table spike.plans enable row level security;
+alter table spike.decisions enable row level security;
+alter table spike.receipts enable row level security;
+create policy owner_only on spike.plans to yourset_spike_app using(owner=nullif(current_setting('spike.owner',true),'')::uuid) with check(owner=nullif(current_setting('spike.owner',true),'')::uuid);
+create policy owner_only on spike.decisions to yourset_spike_app using(owner=nullif(current_setting('spike.owner',true),'')::uuid) with check(owner=nullif(current_setting('spike.owner',true),'')::uuid);
+create policy owner_only on spike.receipts to yourset_spike_app using(owner=nullif(current_setting('spike.owner',true),'')::uuid) with check(owner=nullif(current_setting('spike.owner',true),'')::uuid);

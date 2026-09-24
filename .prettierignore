@@ -1,0 +1,10 @@
+.venv/
+dist/
+web/assets/
+collectors/garmin/requirements.lock
+
+# The auth spike and its authoritative loopback guard are preserved verbatim.
+spikes/
+
+# Prose formatting stays under human control.
+*.md
