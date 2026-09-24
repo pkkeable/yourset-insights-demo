@@ -11,7 +11,7 @@ The tracked source is synthetic-only. Real records, secrets and private reports 
 ## Private material has a default location
 
 The failure mode is not a missed regex. It is writing an operational report
-into a tracked directory and only then deciding it was private — a judgement
+into a tracked directory and only then deciding it was private, a judgement
 no scanner can make for you. So the location is the decision:
 
 | Material | Goes to |
@@ -30,7 +30,7 @@ The ignore rules also reject common accidental private paths. They are a backsto
 | Default location | the mistake existing | relies on habit |
 | `pre-commit` | entry into local history | bypassable; per-clone |
 | `pre-push` | **data leaving the machine** | bypassable; per-clone |
-| CI (`privacy.yml`) | nothing — it runs after the push | tripwire and publish gate only |
+| CI (`privacy.yml`) | nothing; it runs after the push | tripwire and publish gate only |
 | `publish-audit` | publishing a dirty history | run it before every publish |
 
 `pre-push` is the layer that matters most. A commit can be rewritten; a push
@@ -43,7 +43,7 @@ anything ever pushed stays retrievable by SHA even after a force-push.
 
 `gitleaks` is the credential gate: a maintained ruleset covering JWT-form
 Supabase keys, provider tokens, cloud access keys and private-key blocks.
-The hand-written patterns in `scripts/privacy-check.mjs` are a backstop only —
+The hand-written patterns in `scripts/privacy-check.mjs` are a backstop only;
 hand-maintained patterns rot, which is how an earlier version of that script
 came to be blind to the one credential format this project actually uses.
 
@@ -60,6 +60,6 @@ its gates already installed.
 ## Before publishing
 
 Run `npm run audit:history` against the exact ref being published, clear the
-`docs/PUBLICATION.md` gates, and publish to a **fresh** repository. The
+`docs/PUBLICATION.md` gates, and use a **fresh** repository for the initial public release. Subsequent releases retain that public history and import only reviewed source exports. The
 development repository has a pre-rewrite commit on GitHub, so its visibility
-must stay private. A public release contains only the reviewed source export and fresh history.
+must stay private. A public release contains only reviewed source files and public release history.

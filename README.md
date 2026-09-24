@@ -1,23 +1,16 @@
 # YourSet Insights
 
-A health and training dashboard for understanding progress when the signals disagree. It brings weight, nutrition, comparable lifts, activity and recovery into one review, then lets the user record a decision and return to its original evidence later.
+Weight, food logs and training can tell different stories. YourSet Insights brings them into one review so you can decide what to investigate, record an action and later compare the outcome with the evidence you had at the time.
 
-Built by [Preston Keable](https://github.com/pkkeable), with AI-assisted implementation. The public demo uses independent synthetic records. No account, health export, model API or paid service is required.
+The central lesson: useful guidance depends on showing what the data can support. Missing records, changed exercises and uncertain explanations stay visible.
 
-![Six-card overview using independent synthetic observations](docs/images/overview.png)
+**[Open the interactive demo](https://yourset-insights-demo.vercel.app/)** · [Follow the walkthrough](#a-short-walkthrough) · [How this was built](#how-this-was-built)
 
-## Try it locally
+[![Public verification](https://github.com/pkkeable/yourset-insights-demo/actions/workflows/privacy.yml/badge.svg)](https://github.com/pkkeable/yourset-insights-demo/actions/workflows/privacy.yml)
 
-Install **Node.js 22 or later**, then run:
+No account, health export or model API is required. The demo uses independently generated synthetic records and resets on reload.
 
-```sh
-npm ci
-npm run dev
-```
-
-Open **http://127.0.0.1:4173/**. The initial scenario is “Weight-loss slowdown”; its reference date is June 29, 2026. `npm run build` produces an allowlisted static site in `dist/`. Serve that directory at an origin root; no private API or database is included.
-
-The synthetic demo keeps decisions in the current tab and resets on reload. The separate private runtime persists them to a local database; its disposable verification setup is **not yet a personal installation**.
+[![Six-card overview using independent synthetic observations](docs/images/overview.png)](https://yourset-insights-demo.vercel.app/)
 
 ## A short walkthrough
 
@@ -28,11 +21,33 @@ The synthetic demo keeps decisions in the current tab and resets on reload. The 
 
 Use the scenario selector to explore incomplete food logs, stale measurements, substituted exercises, conflicting signals and an unchanged plan. Details remain available below the overview and in Training and Nutrition / Weight.
 
+## How this was built
+
+[Preston Keable](https://github.com/pkkeable) defined the product problem, reporting priorities, privacy boundaries and acceptance criteria, and reviewed the resulting experience. AI coding agents implemented much of the application and automated verification. The engineering notes connect implementation findings to the decisions and verification that followed.
+
+Three decisions show that direction in the product:
+
+- **Make the overview useful at a glance.** Review of an overly dense screen led to a brief assessment and six charts, with evidence available through drill-downs. See the [design contract](docs/DESIGN.md).
+- **Explain progress without pretending to know its cause.** The product brief prioritised body composition, recovery and the relationship between intake and activity. The implementation separates scale weight from tissue change, comparable strength from attendance, and missing observations from zero. See the [metric contract](docs/METRICS.md).
+- **Make the portfolio public while keeping personal use private.** One implementation supplies an independent synthetic demo and a separate private-runtime foundation. Reviewed source exports preserve provenance without exposing private history. See the [publication boundary](docs/PUBLICATION.md).
+
+[AGENTS.md](AGENTS.md) defines the rules agents worked under. [Engineering findings](ENGINEERING.md) records constraints caught during implementation and verification, including a runner that checks actual port bindings instead of trusting requested settings. [Capabilities](docs/CAPABILITIES.md) distinguishes those observations from what remains unproven.
+
+## What is in this repository
+
+| Area | Purpose and status |
+| --- | --- |
+| `src/`, `web/` and the static build | The working synthetic product: shared calculations, six charts, investigations and a decision/review loop. This is the hosted demo. |
+| `private-api/` and `dev/local/` | The private-runtime foundation and disposable verification harness. Local tests cover authenticated reads, durable commands, MFA and owner isolation. A supported personal installation remains separate work. |
+| `adapters/`, `collectors/` and `spikes/` | Offline import groundwork, an optional Garmin candidate and an isolated architecture experiment. These are not live integrations and are excluded from the hosted build. |
+
+The authentication and database boundaries support the intended private health-data application. They are not needed to run the public demo. The [source capability table](docs/SOURCES.md) identifies what each connector actually supports.
+
 ## Why the calculations are conservative
 
 A sync is not a complete food log. Weight is not a measurement of fat or lean tissue. A different machine is not a comparable lift. Missing recovery observations are not zeros.
 
-One deterministic engine applies completed-day windows, dated targets, original writers, source revisions and exact exercise comparisons. The charts and narrative use those same results. There is no global readiness score, automatic numerical prescription, wearable-calorie adjustment or photo body-fat estimate.
+One deterministic engine applies completed-day windows, dated targets, the app that originally recorded each observation, source revisions and exact exercise comparisons. The charts and narrative use those same results. There is no global readiness score, automatic numerical prescription, wearable-calorie adjustment or photo body-fat estimate.
 
 ## Architecture
 
@@ -60,6 +75,19 @@ The framework-free browser UI and static build keep the public demonstration eas
 | [Design](docs/DESIGN.md) | The approved six-card hierarchy and accessible drill-downs |
 | [Capability matrix](docs/CAPABILITIES.md) | Dated evidence and what remains unproven |
 
+## Run it locally
+
+Install **Node.js 22 or later**, then run:
+
+```sh
+npm ci
+npm run dev
+```
+
+Open **http://127.0.0.1:4173/**. The initial scenario is “Weight-loss slowdown”, with a fixed reference date of June 29, 2026. `npm run build` produces the allowlisted static site in `dist/`; relative asset paths support an origin root or a project subdirectory.
+
+Synthetic decisions last only for the current tab and reset on reload. The private runtime persists them to a local database; its disposable verification setup is **not a personal installation**.
+
 ## Verify it
 
 ```sh
@@ -67,7 +95,7 @@ npm run check
 npm run build
 ```
 
-`check` runs syntax, formatting, tracked-tree privacy checks and JavaScript tests. The repository's CI also runs the hash-pinned Python collector/reference tests and lint. Local integration tests exercise actual PostgreSQL, Auth, HTTP routes and Chromium, including owner isolation, MFA, rollback, retries, restart and mobile rendering:
+`check` runs syntax, formatting, tracked-tree privacy checks and JavaScript tests. CI adds the hash-pinned Python collector/reference tests, lint and a Chromium walkthrough of the built static demo under its hosted subdirectory. Local integration tests exercise actual PostgreSQL, Auth, HTTP routes and Chromium, including owner isolation, MFA, rollback, retries, restart and mobile rendering:
 
 ```sh
 npm run test:product-slice
@@ -78,9 +106,9 @@ Those two suites require the supported **macOS ARM + Docker Desktop** environmen
 
 ## Current boundaries
 
-The synthetic product and authenticated local decision loop are tested. Personal-source ingestion, a persistent Mac launcher, account recovery, backups and unattended refresh remain separate work. No hosted operation, provider account validation, physiological benefit or elapsed unattended trial is claimed. Hevy and Apple Health adapters are offline groundwork; Garmin is an optional candidate, and Strava is excluded. See [source capabilities](docs/SOURCES.md) and the [private runbook](docs/RUNBOOK.md).
+The synthetic product and authenticated local decision loop are tested. Personal-source ingestion, a persistent Mac launcher, account recovery, backups and unattended refresh remain separate work. Hosting the synthetic demo does not establish private hosted operation, provider account validation, physiological benefit or an elapsed unattended trial. Hevy and Apple Health adapters are offline groundwork; Garmin is an optional candidate, and Strava is excluded. See [source capabilities](docs/SOURCES.md) and the [private runbook](docs/RUNBOOK.md).
 
-Private configuration, records and operational reports belong outside source control. The public release uses a fresh reviewed source snapshot; it does not expose private repository history. [Privacy workflow](docs/PRIVACY_WORKFLOW.md) · [Publication boundary](docs/PUBLICATION.md).
+Private configuration, records and operational reports belong outside source control. The initial public release used a fresh reviewed source snapshot. Later releases keep normal public history while importing only reviewed source files; private development history stays private. [Privacy workflow](docs/PRIVACY_WORKFLOW.md) · [Publication boundary](docs/PUBLICATION.md).
 
 ## Attribution and rights
 

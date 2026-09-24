@@ -9,9 +9,9 @@ The analytics brief's accessibility correction takes precedence over the earlier
 The visual reference does not supply any personal fixture values. All records, dates and target examples are independently synthetic.
 
 
-## Approved overview baseline — September 21, 2026
+## Approved overview baseline: September 21, 2026
 
-Status: approved design for the next implementation. The six-card local preview is the layout reference. This section supersedes the earlier four-outcome-card layout and the requirement to show the full execution table and findings before expansion. Approval fixes the information hierarchy for now; it does not certify implementation, data completeness, source delivery or publication readiness.
+Status: approved design, implemented in the v0.1.0 public release. The six-card overview remains the layout reference; current implementation evidence is in [release checks](RELEASE_CHECKS.md). This section supersedes the earlier four-outcome-card layout and the requirement to show the full execution table and findings before expansion. Approval fixes the information hierarchy for now; it does not certify implementation, data completeness, source delivery or publication readiness.
 
 ### Page hierarchy
 

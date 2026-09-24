@@ -1,6 +1,6 @@
 {
   "name": "yourset-insights",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Turn health and training data into decisions: a deterministic metric engine with explicit completeness, source lineage and dated targets, demonstrated on synthetic data.",
   "author": "Preston Keable <255617622+pkkeable@users.noreply.github.com>",
   "license": "UNLICENSED",

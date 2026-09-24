@@ -1,5 +1,9 @@
-import { overviewCards } from "/web/overview-view.mjs";
-import { SCENARIOS, scenario, addSyntheticFollowup } from "/src/scenarios.mjs";
+import { overviewCards } from "./overview-view.mjs";
+import {
+  SCENARIOS,
+  scenario,
+  addSyntheticFollowup,
+} from "../src/scenarios.mjs";
 import {
   analyze,
   decide,
@@ -14,7 +18,7 @@ import {
   formatUS,
   displayEvidence,
   completeReview,
-} from "/src/metrics.mjs";
+} from "../src/metrics.mjs";
 const privateSlice =
   document.querySelector('meta[name="yourset-runtime"]')?.content ===
   "private-local";
@@ -131,7 +135,7 @@ async function checkSession() {
 }
 function authScreen() {
   $("#app").innerHTML =
-    `<main id="main" class="auth-shell"><div class="card"><div class="brand"><img class="brand-mark" src="/web/assets/yourset-logo.svg" alt="YourSet"><div class="logo">Your<span>Set</span></div></div><h1>Private workspace</h1><p>Local verification · synthetic records only</p>${authState === "checking" ? '<p role="status">Checking your session…</p>' : authState === "mfa_required" ? `<h2>Authenticator verification</h2>${authEnrollment ? `<p>Enter this setup key in your authenticator app. It disappears after verification.</p><code id="totp-setup-key">${esc(authEnrollment.secret)}</code>` : authNeedsEnrollment ? '<button id="auth-enroll" type="button">Set up authenticator</button>' : "<p>Enter the current code from your enrolled authenticator.</p>"}<form id="auth-verify" class="form"><label>Six-digit code<input name="code" inputmode="numeric" pattern="[0-9]{6}" autocomplete="one-time-code" required></label><button class="primary">Verify</button></form><button id="auth-cancel">Cancel sign-in</button>` : `<form id="auth-login" class="form"><label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" autocomplete="current-password" required></label><button class="primary">Sign in</button></form>`}<p id="auth-message" role="status">${esc(authMessage)}</p><p class="micro">Access is limited to enrolled identities. Lost password or authenticator access requires the reviewed recovery process; verification cannot be skipped.</p></div></main>`;
+    `<main id="main" class="auth-shell"><div class="card"><div class="brand"><img class="brand-mark" src="./web/assets/yourset-logo.svg" alt="YourSet"><div class="logo">Your<span>Set</span></div></div><h1>Private workspace</h1><p>Local verification · synthetic records only</p>${authState === "checking" ? '<p role="status">Checking your session…</p>' : authState === "mfa_required" ? `<h2>Authenticator verification</h2>${authEnrollment ? `<p>Enter this setup key in your authenticator app. It disappears after verification.</p><code id="totp-setup-key">${esc(authEnrollment.secret)}</code>` : authNeedsEnrollment ? '<button id="auth-enroll" type="button">Set up authenticator</button>' : "<p>Enter the current code from your enrolled authenticator.</p>"}<form id="auth-verify" class="form"><label>Six-digit code<input name="code" inputmode="numeric" pattern="[0-9]{6}" autocomplete="one-time-code" required></label><button class="primary">Verify</button></form><button id="auth-cancel">Cancel sign-in</button>` : `<form id="auth-login" class="form"><label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" autocomplete="current-password" required></label><button class="primary">Sign in</button></form>`}<p id="auth-message" role="status">${esc(authMessage)}</p><p class="micro">Access is limited to enrolled identities. Lost password or authenticator access requires the reviewed recovery process; verification cannot be skipped.</p></div></main>`;
   const login = $("#auth-login");
   if (login)
     login.onsubmit = async (e) => {
@@ -681,6 +685,147 @@ function planForm() {
     ],
   )}</div>`;
 }
+const pages = ["Overview", "Training", "Nutrition / Weight", "Investigations"];
+
+function renderNavigation() {
+  const icons = ["◫", "↗", "◷", "⌕"];
+  return pages
+    .map(
+      (name, i) => `
+    <button data-page="${name}" ${page === name ? 'aria-current="page"' : ""}>
+      <span class="nav-icon">${icons[i]}</span>${name}
+    </button>
+  `,
+    )
+    .join("");
+}
+
+function renderSidebar(a) {
+  return `<aside>
+    <div class="brand">
+      <img class="brand-mark" src="./web/assets/yourset-logo.svg" alt="YourSet YS and dumbbell mark">
+      <div><div class="logo">Your<span>Set</span></div><div class="brand-sub">Insights</div></div>
+    </div>
+    <nav aria-label="Main navigation">${renderNavigation()}</nav>
+    <div class="aside-bottom">
+      <span class="demo-dot">●</span> Independent synthetic profile<br>
+      No live sources connected<br>Metrics & rules v${a.version}
+    </div>
+  </aside>`;
+}
+
+function renderScenarioSelector() {
+  const options = SCENARIOS.map(
+    ([id, title]) =>
+      `<option value="${id}" ${id === data.id ? "selected" : ""}>${title}</option>`,
+  ).join("");
+  return `<div class="topbar">
+    <span class="demo">◉ Synthetic demonstration data</span>
+    <label class="scenario-label">Explore a scenario
+      <select id="scenario" aria-label="Scenario">${options}</select>
+    </label>
+  </div>`;
+}
+
+function renderHeading(a) {
+  const title = showPlan
+    ? "Your plan"
+    : page === "Overview"
+      ? "Your progress, in view."
+      : page;
+  const phase = planAt(data.plans, data.clock)?.phase ?? "Phase unconfigured";
+  const windows = [28, 14, 90, 180]
+    .map(
+      (days) =>
+        `<option value="${days}" ${periodDays === days ? "selected" : ""}>Last ${days} completed days</option>`,
+    )
+    .join("");
+  return `<div class="heading-row">
+    <div>
+      <span class="eyebrow">${esc(phase)} · Review period</span>
+      <h1>${title}</h1>
+      <small>${a.current.from}–${a.current.to} vs ${a.previous.from}–${a.previous.to} · ${data.timezone}</small>
+    </div>
+    <div class="header-controls">
+      <label>Reporting window<select id="period" aria-label="Reporting window">${windows}</select></label>
+      <button id="edit-plan">Edit plan</button>
+    </div>
+  </div>`;
+}
+
+function renderProgress() {
+  const steps = [
+    "Plan",
+    "Execute",
+    "Measure",
+    "Investigate",
+    "Adjust",
+    "Reassess",
+  ];
+  const active = pages.indexOf(page) + 2;
+  return `<div class="progress" hidden aria-label="Decision loop">${steps
+    .map(
+      (step, i) =>
+        `<span class="${i === active ? "active" : ""}">${step}</span>`,
+    )
+    .join('<span aria-hidden="true">→</span>')}</div>`;
+}
+
+function renderContent(a) {
+  if (showPlan) return planForm();
+  switch (page) {
+    case "Overview":
+      return overview(a);
+    case "Training":
+      return training(a);
+    case "Nutrition / Weight":
+      return nutrition(a);
+    default:
+      return investigation(a);
+  }
+}
+
+function renderSources() {
+  return `<div class="source-grid">${[
+    "Nutrition",
+    "Weight / composition",
+    "Training",
+    "Recovery",
+  ]
+    .map(
+      (name) => `
+    <div class="source"><strong>${name}</strong><br>
+      <span class="muted">Synthetic-tested<br>Live account: not validated</span>
+    </div>
+  `,
+    )
+    .join("")}</div>`;
+}
+
+function renderFooter() {
+  return `<footer class="footer">
+    US units · Reference date: ${data.clock} · Synthetic observations only · No external requests or live import routes.<br>
+    Coverage describes available records. These scenarios test software behavior, not physiological efficacy.<br>
+    <strong>Not medical advice.</strong> This is a software demonstration. It does not diagnose, treat or prescribe,
+    and it is not a substitute for a qualified health professional.
+  </footer>`;
+}
+
+function renderShell(a) {
+  return `<div class="shell">
+    ${renderSidebar(a)}
+    <main id="main" tabindex="-1">
+      ${renderScenarioSelector()}
+      ${renderHeading(a)}
+      ${renderProgress()}
+      ${message ? `<p class="global-status" role="status">${esc(message)}</p>` : ""}
+      ${renderContent(a)}
+      ${renderSources()}
+      ${renderFooter()}
+    </main>
+  </div>`;
+}
+
 function render() {
   if (privateSlice && authState !== "authenticated") {
     authScreen();
@@ -698,8 +843,7 @@ function render() {
     return;
   }
   const a = analyze(data, periodDays);
-  $("#app").innerHTML =
-    `<div class="shell"><aside><div class="brand"><img class="brand-mark" src="/web/assets/yourset-logo.svg" alt="YourSet YS and dumbbell mark"><div><div class="logo">Your<span>Set</span></div><div class="brand-sub">Insights</div></div></div><nav aria-label="Main navigation">${["Overview", "Training", "Nutrition / Weight", "Investigations"].map((s, i) => `<button data-page="${s}" ${page === s ? 'aria-current="page"' : ""}><span class="nav-icon">${["◫", "↗", "◷", "⌕"][i]}</span>${s}</button>`).join("")}</nav><div class="aside-bottom"><span class="demo-dot">●</span> Independent synthetic profile<br>No live sources connected<br>Metrics & rules v${a.version}</div></aside><main id="main" tabindex="-1"><div class="topbar"><span class="demo">◉ Synthetic demonstration data</span><label class="scenario-label">Explore a scenario<select id="scenario" aria-label="Scenario">${SCENARIOS.map(([id, title]) => `<option value="${id}" ${id === data.id ? "selected" : ""}>${title}</option>`).join("")}</select></label></div><div class="heading-row"><div><span class="eyebrow">${esc(planAt(data.plans, data.clock)?.phase ?? "Phase unconfigured")} · Review period</span><h1>${showPlan ? "Your plan" : page === "Overview" ? "Your progress, in view." : page}</h1><small>${a.current.from}–${a.current.to} vs ${a.previous.from}–${a.previous.to} · ${data.timezone}</small></div><div class="header-controls"><label>Reporting window<select id="period" aria-label="Reporting window"><option value="28" ${periodDays === 28 ? "selected" : ""}>Last 28 completed days</option><option value="14" ${periodDays === 14 ? "selected" : ""}>Last 14 completed days</option><option value="90" ${periodDays === 90 ? "selected" : ""}>Last 90 completed days</option><option value="180" ${periodDays === 180 ? "selected" : ""}>Last 180 completed days</option></select></label><button id="edit-plan">Edit plan</button></div></div><div class="progress" hidden aria-label="Decision loop">${["Plan", "Execute", "Measure", "Investigate", "Adjust", "Reassess"].map((s, i) => `<span class="${i === ["Overview", "Training", "Nutrition / Weight", "Investigations"].indexOf(page) + 2 ? "active" : ""}">${s}</span>`).join('<span aria-hidden="true">→</span>')}</div>${message ? `<p class="global-status" role="status">${esc(message)}</p>` : ""}${showPlan ? planForm() : page === "Overview" ? overview(a) : page === "Training" ? training(a) : page === "Nutrition / Weight" ? nutrition(a) : investigation(a)}<div class="source-grid">${["Nutrition", "Weight / composition", "Training", "Recovery"].map((s) => `<div class="source"><strong>${s}</strong><br><span class="muted">Synthetic-tested<br>Live account: not validated</span></div>`).join("")}</div><footer class="footer">US units · Reference date: ${data.clock} · Synthetic observations only · No external requests or live import routes.<br>Coverage describes available records. These scenarios test software behavior, not physiological efficacy.<br><strong>Not medical advice.</strong> This is a software demonstration. It does not diagnose, treat or prescribe, and it is not a substitute for a qualified health professional.</footer></main></div>`;
+  $("#app").innerHTML = renderShell(a);
   document.querySelectorAll("[data-chart]").forEach(
     (b) =>
       (b.onclick = () => {

@@ -55,3 +55,6 @@ outputs/
 visual-comparison/
 *PUBLICATION-HANDOFF*.md
 *-diagnostic-*.md
+
+# Local hosting account linkage is not release source.
+.vercel/

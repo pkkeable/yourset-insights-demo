@@ -1,4 +1,4 @@
-# Dependency review — 2026-09-12
+# Dependency review: 2026-09-12
 
 Selected garminconnect 0.3.15, Python 3.12.14. Registry wheel SHA-256: `aa57cb5635eb2ad8f2ba9899043b644125289fd7169cd29d74b3207df4246c0d`. PyPI and GitHub tag `0.3.15` agree; tag commit `54079fbca3cafaa371b5d0cd1aa9cfb0ae62c7a5`. The wheel's client.py matches that tag byte-for-byte (`9f0d3bdc5389cfef2a8cac33bddb121b80e083f86c9023906c05c709c749fc90`). This resolves the older handoff's registry/tag discrepancy for the chosen artifact.
 

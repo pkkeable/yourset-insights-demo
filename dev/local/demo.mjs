@@ -8,10 +8,12 @@ import { chromium } from "playwright";
 import { createServer } from "../../server.mjs";
 import { SCENARIOS } from "../../src/scenarios.mjs";
 import { startBrowser } from "./browser.mjs";
+import { createStaticServer, demoBasePath } from "./static.mjs";
 const root = fileURLToPath(new URL("../..", import.meta.url));
-const docker = realpathSync(
-  "/Applications/Docker.app/Contents/Resources/bin/docker",
-);
+const docker =
+  process.platform === "darwin"
+    ? realpathSync("/Applications/Docker.app/Contents/Resources/bin/docker")
+    : null;
 const env = {
   ...process.env,
   DOCKER_HOST:
@@ -29,22 +31,41 @@ const network = "yourset-demo-verification";
 let service,
   browser,
   owned = false;
-const app = createServer();
+const urlFlag = process.argv.indexOf("--url");
+const hostedUrl = urlFlag === -1 ? null : process.argv[urlFlag + 1];
+if (urlFlag !== -1 && (!hostedUrl || !/^https:\/\//.test(hostedUrl)))
+  throw Error("--url requires a public HTTPS demo URL");
+const built = process.argv.includes("--static");
+const app = hostedUrl
+  ? null
+  : built
+    ? await createStaticServer(root)
+    : createServer();
 try {
-  call(docker, [
-    "network",
-    "create",
-    "-o",
-    "com.docker.network.bridge.host_binding_ipv4=127.0.0.1",
-    network,
-  ]);
-  owned = true;
-  service = await startBrowser(call, docker, root, network);
-  await new Promise((r) => app.listen(0, "127.0.0.1", r));
-  const origin = `http://127.0.0.1:${app.address().port}`;
-  browser = await chromium.connect(service.endpoint, {
-    exposeNetwork: new URL(origin).host,
-  });
+  if (docker) {
+    call(docker, [
+      "network",
+      "create",
+      "-o",
+      "com.docker.network.bridge.host_binding_ipv4=127.0.0.1",
+      network,
+    ]);
+    owned = true;
+    service = await startBrowser(call, docker, root, network);
+  }
+  if (app)
+    await new Promise((resolve, reject) => {
+      app.once("error", reject);
+      app.listen(0, "127.0.0.1", resolve);
+    });
+  const baseUrl =
+    hostedUrl ??
+    `http://127.0.0.1:${app.address().port}${built ? demoBasePath : "/"}`;
+  browser = docker
+    ? await chromium.connect(service.endpoint, {
+        exposeNetwork: new URL(baseUrl).host,
+      })
+    : await chromium.launch();
   const page = await browser.newPage({
       viewport: { width: 1536, height: 1600 },
     }),
@@ -52,9 +73,17 @@ try {
     external = [];
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("request", (r) => {
-    if (!r.url().startsWith(origin + "/")) external.push(r.url());
+    if (!r.url().startsWith(baseUrl)) external.push(r.url());
   });
-  await page.goto(origin);
+  const failed = [];
+  page.on("response", (response) => {
+    if (response.status() >= 400)
+      failed.push(`${response.status()} ${response.url()}`);
+  });
+  page.on("console", (event) => {
+    if (event.type() === "error") errors.push(event.text());
+  });
+  await page.goto(baseUrl);
   await page.locator('[data-card="recovery"]').waitFor();
   await page.evaluate(() => document.fonts.ready);
   assert.equal(await page.locator(".overview-trends > [data-card]").count(), 6);
@@ -133,12 +162,21 @@ try {
   );
   assert.deepEqual(errors, []);
   assert.deepEqual(external, []);
+  assert.deepEqual(failed, []);
+  if (built || hostedUrl) {
+    assert(
+      await page
+        .locator('meta[http-equiv="Content-Security-Policy"]')
+        .getAttribute("content")
+        .then((value) => value.includes("connect-src 'none'")),
+    );
+  }
   console.log(
-    "PASS public demo: ten scenarios across all views, six cards, complete decision/review story, narrow-screen overflow, keyboard selector and no external requests or browser errors.",
+    `PASS ${hostedUrl ? "hosted" : built ? "static build" : "source"} public demo: ten scenarios across all views, six cards, complete decision/review story, narrow-screen overflow, keyboard selector and no external requests or browser errors.`,
   );
 } finally {
   await browser?.close();
-  await new Promise((r) => app.close(r));
+  if (app?.listening) await new Promise((r) => app.close(r));
   service?.stop();
   if (owned) call(docker, ["network", "rm", network]);
 }

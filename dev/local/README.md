@@ -29,3 +29,9 @@ All four private command routes (combined target/decision, standalone plan, deci
 `npm run test:auth` runs the separate authentication suite through the same guarded launcher and disposable browser. It covers real product login/MFA, private save, two identities, restart, concurrent refresh across two server processes, fail-closed refresh, key loss/rotation, expiry, logout and account switching. Its separate test relay injects upstream outages and records no credentials or payloads. It never replaces a successful Auth response with a fabricated identity. The original product-slice assertions are unchanged and remain a separate regression gate.
 
 The local DDL is still disposable setup, not a production migration. Password/authenticator recovery, hosted setup, production key custody, connectors and persistent installation are not ready. Server-owned upstream-signout retries run only while the local product process is alive; they resume from stored state on restart, stop after five attempts, and require operator investigation if exhausted. No operating-system schedule is installed.
+
+## Public static demo checks
+
+`npm run build && npm run test:demo -- --static` exercises the built site under a project subdirectory, including all ten scenarios, the complete decision/review loop, mobile overflow, keyboard controls, failed asset requests and unexpected network requests. On the supported Mac it uses the same disposable Docker browser. In public CI it uses Playwright Chromium on Linux; this does not establish Linux support for the private runtime.
+
+`npm run test:demo -- --url https://yourset-insights-demo.vercel.app/` runs that walkthrough against the published synthetic site. It does not submit data to any service: decisions are held in the disposable browser tab. Without either option, `test:demo` exercises the local source server. `--screenshots` explicitly refreshes the synthetic README image.

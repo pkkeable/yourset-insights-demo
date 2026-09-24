@@ -25,6 +25,7 @@ dev/local/browser.mjs
 dev/local/demo.mjs
 dev/local/product-schema.sql
 dev/local/run.mjs
+dev/local/static.mjs
 dev/local/supabase/.gitignore
 dev/local/supabase/config.toml
 docs/AUTH_CONTRACT.md
@@ -88,6 +89,7 @@ tests/product.test.mjs
 tests/server.test.mjs
 tests/test_collector.py
 tests/test_delivery.py
+vercel.json
 web/app.mjs
 web/assets/DM-Sans-OFL.txt
 web/assets/JetBrains-Mono-OFL.txt

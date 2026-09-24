@@ -2,6 +2,8 @@
 
 What the local experiments actually taught, including the things that broke.
 
+Product direction and agent implementation roles are described in [How this was built](README.md#how-this-was-built). The findings below document the implementation and verification work behind those product decisions.
+
 This is deliberately not a status document. Current state belongs in
 [docs/CAPABILITIES.md](docs/CAPABILITIES.md); the architecture decision and
 its reasoning belong in
@@ -13,7 +15,7 @@ shaped the design more than any plan did.
 
 The intended session check read `auth.sessions` directly. Under the local
 administrative role that delegation could not be granted, so the direct
-approach was not merely inadvisable — it was unavailable.
+approach was not merely inadvisable; it was unavailable.
 
 The resolution was a narrow boolean function, `spike.session_valid(session_id,
 owner_id)`, returning only whether that session belongs to that owner. It is
@@ -28,7 +30,7 @@ application learns one bit, and never sees a session row.
 ## Connection reuse left transaction context empty
 
 Owner context is transaction-local, set per request. After connection reuse,
-that setting came back empty rather than absent — and an empty string cast to
+that setting came back empty rather than absent, and an empty string cast to
 the owner type raised an error instead of simply matching nothing.
 
 Normalising the empty setting to null fixed it: unscoped RLS then returns no
@@ -46,7 +48,7 @@ The guarded runner now refuses to continue rather than proceeding, and a
 development-only Docker shim rewrites port mappings to explicit `127.0.0.1`
 bindings for the spike and local product names only. The runner then inspects
 the *actual* published bindings of every started container and fails on any
-non-loopback host IP — it verifies the observed result rather than trusting
+non-loopback host IP. It verifies the observed result rather than trusting
 the configuration that was requested.
 
 That guard is authoritative and must keep equivalent verified protection until
@@ -70,6 +72,6 @@ behaviour and errors. Dataset size alone is not scale evidence.
 
 No personal health record was used. The local HTTP origin and the
 process-held encryption key are test constraints, not deployment design.
-Hosted deployment permissions, connection pooling, recovery procedures and
-unattended operation remain unproven — see the capability matrix for the
+Private deployment permissions, connection pooling, recovery procedures and
+unattended operation remain unproven; see the capability matrix for the
 full list.

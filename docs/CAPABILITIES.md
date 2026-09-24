@@ -12,13 +12,15 @@ are different claims:
 | **Source-validated** | Reconciled against a real external provider account. |
 | **Operationally observed** | Survived an elapsed, unattended real-use trial. |
 
-Nothing in this project is hosted-verified, source-validated, or
-operationally observed. Every row below stops at *tested locally*. That is a
-statement of scope, not a defect list — but it is the scope.
+Personal-source validation and unattended operation are not established. The public static demonstration and the private runtime have different verification boundaries; hosting the demo does not change the private-runtime rows below.
 
-Results below were observed on **September 18, 2026** on the supported host,
-against commit `73b37cf`, with every suite re-run that evening. They are dated
-observations tied to a commit, not evergreen certification.
+## Check the release, not an inaccessible commit
+
+- [Public CI](https://github.com/pkkeable/yourset-insights-demo/actions/workflows/privacy.yml) attaches test, build, lint, credential-scan and static-browser results to each public commit. Follow the run for the revision you are reviewing.
+- [Release notes](https://github.com/pkkeable/yourset-insights-demo/releases) identify published versions and any hosted walkthrough results. [Release checks](RELEASE_CHECKS.md) records the local test scope and commands.
+- The exported `SOURCE_RELEASE.json` identifies the private source commit and hashes each included file. The initial public commit `47aafc6` exported private source `d9a103a`; its [CI run](https://github.com/pkkeable/yourset-insights-demo/actions/runs/35949321394) is directly inspectable. Later releases update the manifest while preserving normal public history.
+
+Private commit identifiers establish provenance; they are not public links or independent proof of test execution. The older results at the end of this page retain their original date and revision. They have not been relabelled as tests of the current public commit.
 
 ## Synthetic product
 
@@ -53,17 +55,17 @@ reload. That is the demo's design, not a persistence bug.
 Retries stop after five attempts and then require operator investigation.
 Auth expiry tests aged stored timestamps deliberately; outages were injected
 through a local relay. Successful exchanges, browser behaviour, process
-restarts and upstream signout were genuinely observed — on one host.
+restarts and upstream signout were observed on one host.
 
-## September 23 dashboard milestone
+## Local implementation milestones: September 23, 2026
 
 The six-card overview and authenticated dashboard read are tested locally. Saved targets merge by effective date, drive the current plan and completed-day comparison after reload, and preserve historical targets. Private read failures show an explicit unavailable state with no synthetic fallback.
 
-Fresh results: **115 JavaScript tests, 18 product integration checks, 23 authentication checks and 23 Python tests passed**; lint, formatting, privacy gate and static build passed. Browser coverage includes six-card rendering, dated-target reload, an empty plan, missing weight/recovery/cardio, chart keyboard controls, desktop/mobile overflow and unavailable evidence. These tests use independent synthetic records in disposable local services; they do not establish personal ingestion or a persistent installation.
+The dashboard milestone recorded **115 JavaScript tests, 18 product integration checks, 23 authentication checks and 23 Python tests passed**; lint, formatting, privacy gate and static build passed. Browser coverage includes six-card rendering, dated-target reload, an empty plan, missing weight/recovery/cardio, chart keyboard controls, desktop/mobile overflow and unavailable evidence. These tests use independent synthetic records in disposable local services; they do not establish personal ingestion or a persistent installation.
 
-## September 23 decision-loop milestone
+### Decision-loop milestone
 
-Standalone plan changes, decision-only choices (including a defer before any saved plan) and review completion use the same admission, owner transaction, evidence revision and receipt boundary. Browser saves, reload and an actual Node process restart preserve their state. Reviews do not change targets, and original snapshots are immutable to the application role. Fresh verification passed **24 product integration checks and 23 authentication checks**. Injected review failure rolled back both the new review and decision transition; attempts to update original decision snapshots were denied. The current workspace also passed 117 JavaScript tests, including a static-build check that rejects leftover output outside its allowlist.
+Standalone plan changes, decision-only choices (including a defer before any saved plan) and review completion use the same admission, owner transaction, evidence revision and receipt boundary. Browser saves, reload and an actual Node process restart preserve their state. Reviews do not change targets, and original snapshots are immutable to the application role. Fresh verification passed **24 product integration checks and 23 authentication checks**. Injected review failure rolled back both the new review and decision transition; attempts to update original decision snapshots were denied. That decision-loop candidate also passed 117 JavaScript tests, including a static-build check that rejects leftover output outside its allowlist.
 
 ## Not implemented
 
@@ -72,7 +74,7 @@ Standalone plan changes, decision-only choices (including a defer before any sav
 - Reviewed versioned product migrations. Current DDL is disposable setup.
 - A supported service launcher. A development Docker shim stands in, with an
   authoritative loopback guard that must not be weakened before replacement.
-- CI for real-service and browser suites. The current workflow configures JavaScript/Python tests, build, lint, formatting and privacy checks; a workflow definition is not proof of a successful remote run. The macOS-specific service/browser launcher remains separate.
+- CI for private real-service and authentication suites. Public CI covers JavaScript/Python tests, lint, privacy checks and the static demo walkthrough in Chromium. Private database/Auth/browser verification still uses the separate macOS-specific runner; it is not covered by the public CI badge.
 - Backup and restore, export and deletion, retention, redacted monitoring.
 - Any real source integration. Hevy is the first candidate, subject to access
   and rights review. Garmin is a separate track.
@@ -85,7 +87,9 @@ macOS 26.5.2 ARM · Node 26.0.0 · Docker 29.7.2.
 The automated browser runs Linux ARM inside Docker. That does **not** establish
 Linux-host support. Windows is simulated, unverified and unsupported.
 
-## Evidence, September 18 2026
+## Historical local evidence: September 18, 2026
+
+These observations used private development commit `73b37cf`, which is not present in public history. They document the earlier experiment, not current release certification.
 
 | Suite | Result |
 | --- | --- |

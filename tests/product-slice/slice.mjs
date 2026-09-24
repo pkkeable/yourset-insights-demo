@@ -847,10 +847,10 @@ try {
       "renderer",
       "empty plans, missing recovery/weight, chart switches, keyboard and mobile overflow",
     );
-    // Break the live server dependency without a browser interception or fallback.
-    await admin.query(
-      "create or replace function yourset.session_valid(sid uuid,uid uuid) returns boolean language plpgsql security definer set search_path='' as $$begin raise exception 'deliberate path failure';end$$",
-    );
+    // The workflow restarted the server. Another open tab can correctly become
+    // unavailable during that restart; restore it before this separate fault test.
+    await page.reload();
+    await page.locator('button[data-page="Investigations"]').first().click();
     await page.locator("#decision-form [name=choice]").selectOption("edit");
     await page.locator("#decision-form [name=calories]").fill("2310");
     await page.locator("#decision-form [name=protein]").fill("158");
@@ -859,6 +859,10 @@ try {
       .fill("Synthetic failure proof");
     await page.locator("#decision-form [name=effective]").fill("2027-02-01");
     await page.locator("#decision-form [name=review]").fill("2027-02-20");
+    // Break the real dependency only after the healthy page is ready to submit.
+    await admin.query(
+      "create or replace function yourset.session_valid(sid uuid,uid uuid) returns boolean language plpgsql security definer set search_path='' as $$begin raise exception 'deliberate path failure';end$$",
+    );
     await page
       .locator(
         "#decision-form button[type=submit], #decision-form button:not([type])",

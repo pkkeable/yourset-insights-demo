@@ -1,9 +1,9 @@
-import { dashboard, formatUS, planAt, usMeasure } from "/src/metrics.mjs";
+import { dashboard, formatUS, planAt, usMeasure } from "../src/metrics.mjs";
 import {
   recordedNutrition,
   strengthSeries,
   activitySeries,
-} from "/src/overview.mjs";
+} from "../src/overview.mjs";
 const esc = (s) =>
   String(s ?? "").replace(
     /[&<>"']/g,

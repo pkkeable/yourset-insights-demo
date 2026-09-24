@@ -1,6 +1,6 @@
 # ADR 0001: Private write and session boundary
 
-Status: **Accepted — 2026-09-12.**
+Status: **Accepted, 2026-09-12.**
 
 Date: 2026-09-12
 
@@ -20,7 +20,7 @@ The function is invoked during server admission, not embedded in every domain-ta
 
 **Fail-closed admission:** if the session-validity lookup errors or exceeds its finite configured deadline, deny admission with a generic HTTP 503 service-unavailable response. Return no private data, execute no domain write, and never fall back to JWT-only validation or cached acceptance. A successfully evaluated invalid/revoked session remains HTTP 401. Error and timeout behavior is **untested**. Phase 1 must inject both failures in the real application, assert zero private disclosure and zero domain writes, verify deadline enforcement and connection cleanup, and verify recovery on a subsequent healthy request.
 
-**Named risk — internal Auth-schema dependency:** the upstream session check uses a SECURITY DEFINER function reading Supabase's internal `auth` schema. Its implementation details are not a stable public contract, and hosted privileges may differ from local. Current [Supabase session documentation](https://supabase.com/docs/guides/auth/sessions) explicitly describes checking `session_id` against `auth.sessions`; that documented technique does not establish stable internals or validate this function's hosted grants. [Supabase user-data guidance](https://supabase.com/docs/guides/auth/managing-user-data) cautions that managed-schema objects can change.
+**Named risk: internal Auth-schema dependency.** the upstream session check uses a SECURITY DEFINER function reading Supabase's internal `auth` schema. Its implementation details are not a stable public contract, and hosted privileges may differ from local. Current [Supabase session documentation](https://supabase.com/docs/guides/auth/sessions) explicitly describes checking `session_id` against `auth.sessions`; that documented technique does not establish stable internals or validate this function's hosted grants. [Supabase user-data guidance](https://supabase.com/docs/guides/auth/managing-user-data) cautions that managed-schema objects can change.
 
 The application session table is the primary operator-revocation check, independent of the upstream table. An auth-schema break therefore degrades the upstream validation path only in terms of state ownership: it does not erase or bypass application revocation. Because admission requires both checks and fails closed, that degradation can still make new private requests unavailable; it is not permission to skip upstream validation. **Carried hosted risk (local slice authorization):** hosted privilege verification remains unresolved and does not block disposable local implementation. Before hosted operation, verify hosted auth-schema access and the proposed function ownership/grants against current Supabase documentation, record the supported contract and any uncertainty, and stop for a revised design if access is unsupported. Documentation was reviewed on 2026-09-12; actual hosted privilege execution remains unproved and is not authorized by this task.
 

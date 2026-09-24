@@ -70,6 +70,32 @@ test("static build removes stale output and contains exactly its declared files"
     ].sort();
     assert.deepEqual(actual, expected);
     assert.equal(manifest.mode, "synthetic");
+    const html = await readFile(join(root, "dist/index.html"), "utf8");
+    assert.match(html, /http-equiv="Content-Security-Policy"/);
+    assert.match(html, /connect-src 'none'/);
+    assert.match(html, /src="\.\/web\/app\.mjs"/);
+    // The deployed artifact is self-contained even under a project subdirectory.
+    const { createStaticServer, demoBasePath } =
+      await import("../dev/local/static.mjs");
+    const app = await createStaticServer(root);
+    await new Promise((resolve) => app.listen(0, "127.0.0.1", resolve));
+    const base = `http://127.0.0.1:${app.address().port}`;
+    try {
+      assert.equal((await fetch(base + demoBasePath)).status, 200);
+      assert.equal(
+        (await fetch(base + demoBasePath + "web/app.mjs")).status,
+        200,
+      );
+      for (const path of [
+        "/web/app.mjs",
+        demoBasePath + "api/private/dashboard",
+        demoBasePath + "package.json",
+        demoBasePath + "../.env",
+      ])
+        assert.equal((await fetch(base + path)).status, 404);
+    } finally {
+      await new Promise((resolve) => app.close(resolve));
+    }
   } finally {
     await rm(root, { recursive: true, force: true });
   }

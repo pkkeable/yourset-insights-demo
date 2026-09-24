@@ -1,9 +1,9 @@
 # Correctness plus a server-side privacy tripwire. NOTE: CI runs *after* the
-# push, so the privacy gates cannot prevent a leak from reaching GitHub —
+# push, so the privacy gates cannot prevent a leak from reaching GitHub;
 # anything pushed stays retrievable by SHA.
 # Prevention is the pre-push hook. This exists because it is the only layer
 # that survives committing from a different directory or machine, and because
-# it gates the publication decision while the repo is still private.
+# it records verification of the synthetic static build.
 name: checks
 
 on:
@@ -50,6 +50,12 @@ jobs:
 
       - name: Synthetic build
         run: npm run build
+
+      - name: Install Chromium for the synthetic walkthrough
+        run: npx playwright install --with-deps chromium
+
+      - name: Exercise the built demo under a project subdirectory
+        run: npm run test:demo -- --static
 
       - uses: actions/setup-python@v5
         with:

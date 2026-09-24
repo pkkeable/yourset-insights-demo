@@ -1,4 +1,4 @@
-# Private operation runbook — candidate, not activated
+# Private operation runbook: candidate, not activated
 
 ## Status boundary
 
