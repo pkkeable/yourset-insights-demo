@@ -1,0 +1,3 @@
+# Synthetic test value in the PR's first commit, replaced by a per-run random
+# value in the next commit. Not a credential; never deployed.
+02d309810dd1386a6893d4f20a7ce159bd2175b0:tests/cron.test.mjs:generic-api-key:15
