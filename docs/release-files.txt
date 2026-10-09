@@ -8,6 +8,7 @@ AGENTS.md
 ENGINEERING.md
 README.md
 adapters/intake.mjs
+api/cron/engine-canary.js
 collectors/garmin/DEPENDENCY_REVIEW.md
 collectors/garmin/artifact-hashes.json
 collectors/garmin/cli.py
@@ -76,6 +77,7 @@ src/scenarios.mjs
 supabase/migrations/20260912162736_private_landing.sql
 tests/adapters.test.mjs
 tests/auth-session.test.mjs
+tests/cron.test.mjs
 tests/dashboard.test.mjs
 tests/design.test.mjs
 tests/long-horizon.test.mjs

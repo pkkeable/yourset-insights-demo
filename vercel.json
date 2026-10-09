@@ -4,6 +4,7 @@
   "installCommand": "npm ci",
   "buildCommand": "npm test && npm run build",
   "outputDirectory": "dist",
+  "crons": [{ "path": "/api/cron/engine-canary", "schedule": "17 11 * * *" }],
   "headers": [
     {
       "source": "/(.*)",
