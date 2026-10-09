@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { randomBytes } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
 import {
   GET,
@@ -12,7 +13,8 @@ import {
 import { SCENARIOS } from "../src/scenarios.mjs";
 import { VERSION } from "../src/metrics.mjs";
 
-const SECRET = "synthetic-test-secret-0123456789abcdef";
+// Generated per run so no secret-shaped literal is committed.
+const SECRET = randomBytes(24).toString("hex");
 const URL_ = "https://example.test/api/cron/engine-canary";
 const request = (authorization) =>
   new Request(
