@@ -12,6 +12,9 @@ const files = [
   "src/overview.mjs",
   "web/overview-view.mjs",
   "src/scenarios.mjs",
+  "src/returning-lifter.mjs",
+  "src/timeline.mjs",
+  "web/timeline-view.mjs",
 ];
 // Rebuild the generated output so stale files cannot escape the allowlist.
 await rm("dist", { recursive: true, force: true });

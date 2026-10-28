@@ -221,12 +221,26 @@ def test_budget_hard_stops_including_upstream_fallback():
     assert not issubclass(AccessStopped, Exception)
 
 
-def test_transport_stops_challenges_without_retry(monkeypatch):
+@pytest.fixture
+def mock_transport_session():
+    import requests
+
+    # These tests replace Session.send with a fake. Host proxy/CA/netrc settings
+    # are irrelevant to that fake and must not change the guard being exercised.
+    # Keep verification enabled; no process environment or runtime policy changes.
+    with requests.Session() as session:
+        session.trust_env = False
+        session.verify = True
+        yield session
+
+
+def test_transport_stops_challenges_without_retry(monkeypatch, mock_transport_session):
     import requests
 
     calls = []
 
     def fake(s, r, **k):
+        assert k["verify"] is True
         calls.append(r.url)
         response = requests.Response()
         response.status_code = 403
@@ -236,17 +250,22 @@ def test_transport_stops_challenges_without_retry(monkeypatch):
     b = Budget(interval=0)
     with guarded_transport(b):
         with pytest.raises(AccessStopped):
-            requests.get("https://connectapi.garmin.com/activity-service/activity/123")
+            mock_transport_session.get(
+                "https://connectapi.garmin.com/activity-service/activity/123"
+            )
     assert len(calls) == 1 and b.count == 1
 
 
 @pytest.mark.parametrize(
     "status,code", [(401, "reauth_required"), (429, "rate_limited")]
 )
-def test_auth_and_rate_failures_are_sanitized(monkeypatch, status, code):
+def test_auth_and_rate_failures_are_sanitized(
+    monkeypatch, mock_transport_session, status, code
+):
     import requests
 
     def fake(s, r, **k):
+        assert k["verify"] is True
         response = requests.Response()
         response.status_code = status
         response._content = b"private-token-and-measurement"
@@ -255,8 +274,30 @@ def test_auth_and_rate_failures_are_sanitized(monkeypatch, status, code):
     monkeypatch.setattr(requests.Session, "send", fake)
     with guarded_transport(Budget(interval=0)):
         with pytest.raises(AccessStopped, match=code) as e:
-            requests.get("https://connectapi.garmin.com/activity-service/activity/123")
+            mock_transport_session.get(
+                "https://connectapi.garmin.com/activity-service/activity/123"
+            )
     assert "private" not in str(e.value)
+
+
+@pytest.mark.parametrize("verify", [False, None, "synthetic-ca.pem"])
+def test_transport_rejects_nondefault_tls_before_sending(
+    monkeypatch, mock_transport_session, verify
+):
+    import requests
+
+    def unexpected_send(*args, **kwargs):
+        pytest.fail("Rejected TLS configuration reached the transport")
+
+    monkeypatch.setattr(requests.Session, "send", unexpected_send)
+    budget = Budget(interval=0)
+    request = requests.Request(
+        "GET", "https://connectapi.garmin.com/activity-service/activity/123"
+    ).prepare()
+    with guarded_transport(budget):
+        with pytest.raises(AccessStopped, match="tls_verification_required"):
+            mock_transport_session.send(request, verify=verify)
+    assert budget.count == 0
 
 
 def test_validation_scope_and_dependency_integrity():

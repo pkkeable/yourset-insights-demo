@@ -1,3 +1,6 @@
+import { returningLifter } from "../src/returning-lifter.mjs";
+import { timelineAssessment } from "../src/timeline.mjs";
+import { timelineView, bindTimeline, weekLabel } from "./timeline-view.mjs";
 import { overviewCards } from "./overview-view.mjs";
 import {
   SCENARIOS,
@@ -5,7 +8,7 @@ import {
   addSyntheticFollowup,
 } from "../src/scenarios.mjs";
 import {
-  analyze,
+  analyze as coreAnalyze,
   decide,
   reassess,
   editPlan,
@@ -22,6 +25,27 @@ import {
 const privateSlice =
   document.querySelector('meta[name="yourset-runtime"]')?.content ===
   "private-local";
+const demoScenarios = [
+  ["returning", "Returning lifter · eight weeks"],
+  ...SCENARIOS,
+];
+const demoScenario = (id) =>
+  id === "returning" ? returningLifter() : scenario(id);
+const timelineState = {
+  metrics: ["weight", "strength"],
+  week: null,
+  anchor: null,
+  recordMetric: "weight",
+  strengthMode: "overlay",
+};
+function analyze(data, days = 28) {
+  const a = coreAnalyze(data, days);
+  if (privateSlice) return a;
+  const assessment = timelineAssessment(data, a);
+  return assessment
+    ? { ...a, title: assessment.title, timelineAssessment: assessment }
+    : a;
+}
 const chartState = {
   lift: "sessions",
   aerobic: "minutes",
@@ -29,9 +53,9 @@ const chartState = {
   anchor: null,
 };
 let readState = "loading";
-let data = privateSlice ? null : scenario(),
+let data = privateSlice ? null : returningLifter(),
   page = "Overview",
-  periodDays = 28,
+  periodDays = privateSlice ? 28 : 56,
   decision = null,
   history = [],
   showPlan = false,
@@ -561,8 +585,13 @@ function quickExecution(d, a) {
   return `<section class="quick-execution" aria-label="Execution at a glance">${cells.map(([name, value, plan, coverage]) => `<div><h3>${name}</h3><div class="quick-value">${value}</div><p>${plan}</p><small>${coverage}</small></div>`).join("")}</section>`;
 }
 function overview(a) {
-  const d = dashboard(data, a, history),
-    p = planAt(data.plans, data.clock);
+  const d = dashboard(data, a, history);
+  if (a.timelineAssessment)
+    Object.assign(d, {
+      headline: a.timelineAssessment.title,
+      caveat: a.timelineAssessment.detail,
+      next: a.timelineAssessment.next,
+    });
   const notes = [];
   if (!a.weightKnown)
     notes.push([
@@ -576,12 +605,12 @@ function overview(a) {
     ]);
   for (const item of d.priorities)
     if (notes.length < 3) notes.push([item.title, displayEvidence(item)]);
-  return `<section class="overview-brief"><div><span class="eyebrow">Your briefing · ${a.periodDays} days</span><h2>${esc(d.headline)}</h2><p>${esc(d.caveat)}</p></div><div class="brief-next"><span class="eyebrow">Next step</span><p>${esc(d.next)}</p><button class="primary" data-page="Investigations">Review evidence →</button></div></section>
- <div class="overview-plan" data-current-plan><strong>Current plan</strong><span>${p ? `${fmt(p.calories)} kcal · ${fmt(p.protein)} g protein · effective ${esc(p.effective)}` : "No dated plan configured"}</span><span>Steps ${fmt(a.current.steps.mean)}/day · ${a.current.steps.count}/${a.current.days} recorded</span></div>
- ${overviewCards(data, a, chartState)}
- <section class="review-notes"><h2>Review notes</h2><div class="review-note-grid">${notes.map(([title, text]) => `<article><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join("")}</div></section>
- ${adjustment(a)}
- <details class="full-debrief"><summary>Full debrief <span>Execution, comparisons & source evidence</span></summary>${detailedOverview(a)}</details>`;
+  return `<section class="overview-brief"><div><span class="eyebrow">Your briefing · ${a.periodDays} days</span><h2>${esc(d.headline)}</h2><p>${privateSlice ? esc(d.caveat) : `${weekLabel({ from: a.current.from, to: a.current.to })}${a.timelineAssessment ? ` · Strength assessment: ${a.timelineAssessment.keys.map((key) => esc(key.split("|")[0])).join(", ")}` : ""}`}</p></div><div class="brief-next"><span class="eyebrow">Next step</span><p>${esc(d.next)}</p><button class="primary" data-page="Investigations">Review evidence →</button></div></section>
+ ${privateSlice ? overviewCards(data, a, chartState) : timelineView(data, a, timelineState)}
+ ${!privateSlice ? `<section class="timeline-conclusion"><div class="decision-prompt"><h2>Continue, or review the plan?</h2><button class="text-button" data-page="Investigations">Review evidence & decide →</button></div><details><summary>How to read this</summary><p>${esc(d.caveat)}</p><p>${esc(d.next)}</p><p>Nothing changes until you record a decision.</p></details></section>` : ""}
+ ${privateSlice ? `<section class="review-notes"><h2>Review notes</h2><div class="review-note-grid">${notes.map(([title, text]) => `<article><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join("")}</div></section>` : ""}
+ ${privateSlice || history.length ? adjustment(a) : ""}
+ ${privateSlice ? `<details class="full-debrief"><summary>Full debrief <span>Execution, comparisons & source evidence</span></summary>${detailedOverview(a)}</details>` : ""}`;
 }
 function detailedOverview(a) {
   const d = dashboard(data, a, history),
@@ -607,7 +636,7 @@ function detailedOverview(a) {
   const aerobic = d.execution.find((r) => r.id === "execution.aerobic");
   return `<section class="hero dashboard-hero"><div><span class="eyebrow">Current assessment</span><h2>${esc(d.headline)}</h2><p>${esc(a.recoveryConcern ? "Recovery changes warrant attention before routine changes." : a.missingLower ? "Attendance is consistent, but the planned lower-body work is missing." : !a.complete ? "Food-log gaps limit the intake comparison. Keep the observed outcomes separate from the missing data." : (d.priorities.find((e) => e.type === "plausible_explanation")?.title ?? "Read weight, strength and recovery together before changing the plan."))}</p><small>${esc(d.caveat)}</small></div><div class="next-action"><span class="eyebrow">Next step</span><p>${esc(d.next)}</p><button class="primary" ${history.some((x) => x.status === "active" && reviewState(x, data).due) ? 'id="jump-review"' : 'data-page="Investigations"'}>${history.some((x) => x.status === "active" && reviewState(x, data).due) ? "Review your adjustment" : "Choose next step"} →</button></div></section>
   ${quickExecution(d, a)}<div class="grid dashboard-outcomes">
-  <section class="card outcome" data-answer="body"><div class="card-head"><h2>Weight & composition</h2><span class="mini-icon">↘</span></div><div class="metric" data-metric="weight.latest">${formatUS("weight", w.latest, { unit: false })} <span>lb</span></div><p class="status">${a.slowdown ? "Slower fitted trend" : w.direction}</p><small>Latest ${w.latestDate ?? "unavailable"} · ${w.count}/${w.days} observed days${w.stale ? " · stale" : ""}</small>${chart(c.weight.rows)}<dl class="metric-list"><div><dt>7-day mean (${w.count7}/7)</dt><dd>${formatUS("weight", w.mean7)}</dd></div><div><dt>Observed period change</dt><dd>${formatUS("weight", w.net, { signed: true })}</dd></div><div><dt>${a.periodDays}-day fitted rate</dt><dd>${formatUS("weightRate", w.slope, { signed: true })}</dd></div><div><dt>Prior fitted rate</dt><dd>${formatUS("weightRate", w.priorSlope, { signed: true })}</dd></div></dl><p class="micro">Endpoint dates: ${a.netDates.join(" → ") || "unavailable"}. Rate target ${a.weightRangeState}.</p><div class="composition"><p><strong>Waist ${waist ? `${formatUS("waist", waist.value)}` : "not recorded"}</strong><small>${waist ? ` · ${waist.date}; ${c.waist.count} observations` : " · optional measurement"} · trend not established</small></p><p><strong>Scale estimate ${scale ? `${fmt(scale.value, 1)}%` : "unavailable"}</strong><small>${scale ? ` · ${scale.date}; ${esc(scale.writer)} · bioimpedance estimate` : ""}</small></p><small>Fat / lean tissue change is not established by weight or scale estimates.</small></div><button class="text-button" data-page="Nutrition / Weight">Weight details →</button></section>
+  <section class="card outcome" data-answer="body"><div class="card-head"><h2>Weight & composition</h2><span class="mini-icon">↘</span></div><div class="metric" data-metric="weight.latest">${formatUS("weight", w.latest, { unit: false })} <span>lb</span></div><p class="status">${a.slowdown ? "Slower fitted trend" : w.direction}</p><small>Latest ${w.latestDate ?? "unavailable"} · ${w.count}/${w.days} observed days${w.stale ? " · stale" : ""}</small>${privateSlice ? chart(c.weight.rows) : ""}<dl class="metric-list"><div><dt>7-day mean (${w.count7}/7)</dt><dd>${formatUS("weight", w.mean7)}</dd></div><div><dt>Observed period change</dt><dd>${formatUS("weight", w.net, { signed: true })}</dd></div><div><dt>${a.periodDays}-day fitted rate</dt><dd>${formatUS("weightRate", w.slope, { signed: true })}</dd></div><div><dt>Prior fitted rate</dt><dd>${formatUS("weightRate", w.priorSlope, { signed: true })}</dd></div></dl><p class="micro">Endpoint dates: ${a.netDates.join(" → ") || "unavailable"}. Rate target ${a.weightRangeState}.</p><div class="composition"><p><strong>Waist ${waist ? `${formatUS("waist", waist.value)}` : "not recorded"}</strong><small>${waist ? ` · ${waist.date}; ${c.waist.count} observations` : " · optional measurement"} · trend not established</small></p><p><strong>Scale estimate ${scale ? `${fmt(scale.value, 1)}%` : "unavailable"}</strong><small>${scale ? ` · ${scale.date}; ${esc(scale.writer)} · bioimpedance estimate` : ""}</small></p><small>Fat / lean tissue change is not established by weight or scale estimates.</small></div><button class="text-button" data-page="Nutrition / Weight">Weight details →</button></section>
   <section class="card outcome" data-answer="strength"><div class="card-head"><h2>Strength</h2><span class="mini-icon">↗</span></div><div class="metric">${a.strengthCounts.improving + a.strengthCounts.stable}<span> / ${a.strengthKeys.length} comparable lifts</span></div><p class="status">${a.strengthKeys.length ? "Stable or improving" : "Comparison not established"}</p><p class="micro">${d.strengthSummary}. Same reporting periods as above.</p><ul class="anchor-list">${strengthDetail || "<li>No matched exercise / equipment groups.</li>"}</ul><p class="micro">${a.excludedAnchors} comparisons excluded. Latest lift ${d.execution[3].latest ?? "none"}; ${c.lifts.count} recorded sessions.</p><p class="micro">Load at matched exercise, equipment, reps and source. Stable = within ±1%.</p><p class="boundary micro">${a.missingLower ? "No recorded lower-body exposure despite an explicit movement plan." : `${c.lifts.lower} sessions include recorded lower-body exposure; set-target adherence is unconfigured.`} Stable strength does not prove muscle retention.</p><button class="text-button" data-page="Training">Training details →</button></section>
   <section class="card outcome" data-answer="aerobic"><div class="card-head"><h2>Aerobic work</h2><span class="mini-icon">≈</span></div><div class="metric">${aerobic.actual}<span> recorded sessions</span></div><p class="status">${aerobic.target === null ? "Plan comparison unavailable" : `${aerobic.comparableCount} / ${aerobic.target} in ${aerobic.weeks} complete plan weeks`}</p><dl class="metric-list"><div><dt>Recorded distance (mi)</dt><dd>${formatUS("distance", c.aerobic.distanceMeters)}</dd></div><div><dt>Recorded duration</dt><dd>${fmt(c.aerobic.minutes)} min</dd></div><div><dt>Versus prior period</dt><dd>${sign(aerobic.versusPrior)} sessions</dd></div><div><dt>Weekly baseline</dt><dd>${fmt(aerobic.baseline)} session(s)</dd></div></dl><p class="micro">Latest ${aerobic.latest ?? "none"}. Distance covers ${c.aerobic.distanceCount}/${c.aerobic.count} sessions; unlogged activity is unknown.</p><p class="boundary">Endurance change is not established.</p><small>Attendance shows consistency. A matched performance measure is still needed to assess endurance.</small><button class="text-button" data-page="Training">Aerobic details →</button></section>
   <section class="card outcome" data-answer="recovery"><div class="card-head"><h2>Recovery</h2><span class="mini-icon">◷</span></div><h3 class="recovery-title">${recoveryStatus}</h3>${a.recoveryWindow ? `<p class="micro">Recovery flag: latest 28 days (${a.recoveryWindow.from}–${a.recoveryWindow.to}) vs ${a.recoveryWindow.previousFrom}–${a.recoveryWindow.previousTo}. The means below follow the selected ${a.periodDays}-day period.</p>` : ""}<ul class="recovery-list">${d.recovery.map((r) => `<li data-metric="${r.id}"><div><strong>${{ sleep: "Sleep", rhr: "Resting HR", hrv: "Nightly HRV" }[r.kind]}</strong><b>${fmt(r.latestValue, 1)} <small>${{ sleep: "h/night", rhr: "bpm", hrv: "ms" }[r.kind]}</small></b></div><small>Period mean ${fmt(r.current, 1)} · ${sign(r.delta, 1)} vs prior ${fmt(r.prior, 1)} · ${r.count}/${r.days} days (prior ${r.previousCount}/${r.days})</small><small>Latest on ${r.latest ?? "no observation"}${r.stale ? " · stale / unavailable" : ""}; ${r.missing} missing days</small></li>`).join("")}</ul><small>Sleep and resting HR inform this review; HRV is context only. Stale or missing observations cannot reassure. No flag is not clearance.</small></section></div>
@@ -616,11 +645,11 @@ function detailedOverview(a) {
 function training(a) {
   const c = a.current,
     p = planAt(data.plans, c.to);
-  return `<div class="hero"><span class="eyebrow">Program continuity</span><h2>${p ? p.sequence.join(" → ") : "No program sequence configured"}</h2><p>${p ? "A repeating sequence, independent of weekdays." : "Attendance and anchors below are observed; no planned sequence exists to compare them against."} The exercise and movement assignments below are independently synthetic.</p></div><div class="grid outcomes"><div class="card"><h2>Attendance</h2><div class="metric">${c.lifts.count} <span>sessions / ${dashboard(data, a).execution[3].target ?? "unconfigured"} planned</span></div><small>Counts unique strength sessions; Garmin HR context would not add a second session.</small></div><div class="card"><h2>Movement exposure</h2><div class="metric">${c.lifts.lower} <span>sessions with lower-body work</span></div><small>${a.missingLower ? "Planned exposure is missing despite attendance." : "Synthetic program explicitly includes lower-body exposure."} Routine names alone do not define exercises.</small></div><div class="card"><h2>Aerobic work</h2><div class="metric">${c.aerobic.minutes} <span>minutes · ${c.aerobic.count} sessions</span></div><small>${formatUS("distance", c.aerobic.distanceMeters)} recorded distance · ${c.aerobic.distanceCount}/${c.aerobic.count} sessions with distance. No duration target is assumed.</small></div></div><div class="card"><h2>Comparable anchor history</h2><p class="boundary">${a.delta.strength === null ? "Equipment or source changed. These groups remain separate; no progression delta is calculated." : `${dashboard(data, a).strengthSummary}; ${a.excludedAnchors} excluded current groups. Changes below compare each anchor at matched repetitions; no combined strength score.`}</p>${table(
+  return `<div class="hero"><span class="eyebrow">Program continuity</span><h2>${p?.sequence?.length ? p.sequence.join(" → ") : "No program sequence configured"}</h2><p>${p?.sequence?.length ? "A repeating sequence, independent of weekdays." : "Attendance and anchors below are observed; no planned sequence exists to compare them against."} The exercise and movement assignments below are independently synthetic.</p></div><div class="grid outcomes"><div class="card"><h2>Attendance</h2><div class="metric">${c.lifts.count} <span>sessions / ${dashboard(data, a).execution[3].target ?? "unconfigured"} planned</span></div><small>Counts unique strength sessions; Garmin HR context would not add a second session.</small></div><div class="card"><h2>Movement exposure</h2><div class="metric">${c.lifts.lower} <span>sessions with lower-body work</span></div><small>${a.missingLower ? "Planned exposure is missing despite attendance." : "Synthetic program explicitly includes lower-body exposure."} Routine names alone do not define exercises.</small></div><div class="card"><h2>Aerobic work</h2><div class="metric">${c.aerobic.minutes} <span>minutes · ${c.aerobic.count} sessions</span></div><small>${formatUS("distance", c.aerobic.distanceMeters)} recorded distance · ${c.aerobic.distanceCount}/${c.aerobic.count} sessions with distance. No duration target is assumed.</small></div></div><div class="card"><h2>Comparable anchor history</h2><p class="boundary">${a.delta.strength === null ? "A compatible comparison across the full current and prior periods is unavailable. Missing prior observations or changed groups are not evidence of decline." : `${dashboard(data, a).strengthSummary}; ${a.excludedAnchors} excluded current groups. Changes below compare each anchor at matched repetitions; no combined strength score.`}</p>${table(
     a.whole.lifts.rows,
     [
       ["Date", (r) => r.date],
-      ["Routine", (r) => r.routine],
+      ["Routine", (r) => r.routine ?? "Not supplied"],
       ["Exercise", (r) => r.exercise],
       ["Equipment", (r) => r.equipment],
       [
@@ -642,7 +671,7 @@ function nutrition(a) {
       ["Complete days", (r) => `${r.count}/7`],
       ["Daily mean", (r) => (r.complete ? `${fmt(r.mean)} kcal` : "Unknown")],
     ],
-  )}</div><div class="card"><h2>Weight observations</h2>${chart(a.whole.weight.rows)}<p>Latest ${formatUS("weight", a.latestWeight)} · 7-day average ${formatUS("weight", a.last7.weight.mean)}</p><small>Observed endpoint change ${formatUS("weight", a.netWeight, { signed: true })} across ${a.netDates.join(" → ")}. Fitted current slope ${formatUS("weightRate", c.weight.slope, { signed: true })}. None identifies fat or lean tissue change.</small></div></div><div class="card"><h2>Daily records and coverage</h2>${table(
+  )}</div><div class="card"><h2>Weight observations</h2>${privateSlice ? chart(a.whole.weight.rows) : '<button class="text-button" data-page="Overview">Inspect the shared timeline & daily observations →</button>'}<p>Latest ${formatUS("weight", a.latestWeight)} · 7-day average ${formatUS("weight", a.last7.weight.mean)}</p><small>Observed endpoint change ${formatUS("weight", a.netWeight, { signed: true })} across ${a.netDates.join(" → ")}. Fitted current slope ${formatUS("weightRate", c.weight.slope, { signed: true })}. None identifies fat or lean tissue change.</small></div></div><div class="card"><h2>Daily records and coverage</h2>${table(
     a.whole.calories.rows
       .concat(a.whole.rows.filter((r) => r.kind === "calories" && !r.complete))
       .sort((a, b) => a.date.localeCompare(b.date)),
@@ -666,7 +695,7 @@ function nutrition(a) {
   )}</div>`;
 }
 function investigation(a) {
-  return `<div class="hero"><span class="eyebrow">Investigation · rule ${a.ruleVersion}</span><h2>${esc(a.title)}</h2><p>${esc(dashboard(data, a, history).next)} No new numerical target is prescribed. Accepting records this bounded action; only an explicit edit changes targets.</p></div><div class="grid two-col"><div class="card"><h2>Supporting and competing evidence</h2>${evidence(a)}<div class="divider"></div><h3>Limits of the explanation</h3>${a.limitations.map((x) => `<p><small>${x}</small></p>`).join("")}</div><div><div class="card"><h2>Choose the next step</h2><form id="decision-form" class="form"><label>Decision<select name="choice"><option value="accept">Accept the bounded review action</option><option value="edit">Edit · enter my own adjustment</option><option value="defer">Defer</option><option value="reject">Reject</option><option value="continue_unchanged">Continue unchanged</option></select></label><label>Reason or adjustment<textarea name="reason" placeholder="What will you do, and what evidence will you review?"></textarea></label><div class="form-grid"><label>Effective date<input name="effective" type="date" required min="${data.clock}" value="${data.clock}"></label><label>Review checkpoint (optional)<input name="review" type="date" min="${data.clock}" value=""></label></div><div id="target-inputs" hidden><p><small>Optional user-entered targets. The software does not prescribe or validate these values.</small></p><div class="form-grid"><label>Energy target (kcal/day)<input type="number" min="1" name="calories"></label><label>Protein target (g/day)<input type="number" min="1" name="protein"></label></div></div><button class="primary">Record decision</button></form><div id="message" role="status">${esc(message)}</div><small>${privateSlice ? "Plans, decisions and reviews are saved to the local server. History preserves the evidence available when you acted." : "Stored only in this tab. Synthetic records reset when reloaded."}</small></div><div style="height:18px"></div>${adjustment(a)}${decision?.status === "active" ? followup(a) : ""}${history.length ? historyView() : ""}</div></div>`;
+  return `<div class="hero"><span class="eyebrow">Investigation · rule ${a.ruleVersion}</span><h2>${esc(a.title)}</h2><p>${esc(a.timelineAssessment?.next ?? dashboard(data, a, history).next)} No new numerical target is prescribed. Accepting records this bounded action; only an explicit edit changes targets.</p></div><div class="grid two-col"><div class="card"><h2>Supporting and competing evidence</h2>${a.timelineAssessment ? `<p>${esc(a.timelineAssessment.detail)}</p><p>The headline compares completed weekly buckets within the selected window. The debrief below compares the full selected period with its preceding period, which may have no observations.</p>` : ""}${evidence(a)}<div class="divider"></div><h3>Limits of the explanation</h3>${a.limitations.map((x) => `<p><small>${x}</small></p>`).join("")}</div><div><div class="card"><h2>Choose the next step</h2><form id="decision-form" class="form"><label>Decision<select name="choice"><option value="accept">Accept the bounded review action</option><option value="edit">Edit · enter my own adjustment</option><option value="defer">Defer</option><option value="reject">Reject</option><option value="continue_unchanged">Continue unchanged</option></select></label><label>Reason or adjustment<textarea name="reason" placeholder="What will you do, and what evidence will you review?"></textarea></label><div class="form-grid"><label>Effective date<input name="effective" type="date" required min="${data.clock}" value="${data.clock}"></label><label>Review checkpoint (optional)<input name="review" type="date" min="${data.clock}" value=""></label></div><div id="target-inputs" hidden><p><small>Optional user-entered targets. The software does not prescribe or validate these values.</small></p><div class="form-grid"><label>Energy target (kcal/day)<input type="number" min="1" name="calories"></label><label>Protein target (g/day)<input type="number" min="1" name="protein"></label></div></div><button class="primary">Record decision</button></form><div id="message" role="status">${esc(message)}</div><small>${privateSlice ? "Plans, decisions and reviews are saved to the local server. History preserves the evidence available when you acted." : "Stored only in this tab. Synthetic records reset when reloaded."}</small></div><div style="height:18px"></div>${adjustment(a)}${decision?.status === "active" ? followup(a) : ""}${history.length ? historyView() : ""}</div></div>`;
 }
 function followup(a) {
   const r = reassess(decision, data);
@@ -685,10 +714,18 @@ function planForm() {
     ],
   )}</div>`;
 }
-const pages = ["Overview", "Training", "Nutrition / Weight", "Investigations"];
+const pages = privateSlice
+  ? ["Overview", "Training", "Nutrition / Weight", "Investigations"]
+  : [
+      "Overview",
+      "Strength",
+      "Training",
+      "Nutrition / Weight",
+      "Investigations",
+    ];
 
 function renderNavigation() {
-  const icons = ["◫", "↗", "◷", "⌕"];
+  const icons = privateSlice ? ["◫", "↗", "◷", "⌕"] : ["◫", "↗", "↗", "◷", "⌕"];
   return pages
     .map(
       (name, i) => `
@@ -715,10 +752,12 @@ function renderSidebar(a) {
 }
 
 function renderScenarioSelector() {
-  const options = SCENARIOS.map(
-    ([id, title]) =>
-      `<option value="${id}" ${id === data.id ? "selected" : ""}>${title}</option>`,
-  ).join("");
+  const options = demoScenarios
+    .map(
+      ([id, title]) =>
+        `<option value="${id}" ${id === data.id ? "selected" : ""}>${title}</option>`,
+    )
+    .join("");
   return `<div class="topbar">
     <span class="demo">◉ Synthetic demonstration data</span>
     <label class="scenario-label">Explore a scenario
@@ -734,7 +773,7 @@ function renderHeading(a) {
       ? "Your progress, in view."
       : page;
   const phase = planAt(data.plans, data.clock)?.phase ?? "Phase unconfigured";
-  const windows = [28, 14, 90, 180]
+  const windows = (privateSlice ? [28, 14, 90, 180] : [56, 28, 14, 90, 180])
     .map(
       (days) =>
         `<option value="${days}" ${periodDays === days ? "selected" : ""}>Last ${days} completed days</option>`,
@@ -776,12 +815,19 @@ function renderContent(a) {
   switch (page) {
     case "Overview":
       return overview(a);
+    case "Strength":
+      return timelineView(data, a, timelineState, true);
     case "Training":
       return training(a);
     case "Nutrition / Weight":
       return nutrition(a);
     default:
-      return investigation(a);
+      return (
+        investigation(a) +
+        (!privateSlice
+          ? `<details class="full-debrief"><summary>Period calculations <span>Execution, comparisons & source evidence</span></summary>${detailedOverview(a)}</details>`
+          : "")
+      );
   }
 }
 
@@ -812,7 +858,9 @@ function renderFooter() {
 }
 
 function renderShell(a) {
-  return `<div class="shell">
+  if (!privateSlice)
+    return `<div class="shell public-shell refined-shell"><main id="main" tabindex="-1"><header class="demo-header"><div class="brand"><img class="brand-mark" src="./web/assets/yourset-logo.svg" alt="YourSet"><div><div class="logo">Your<span>Set</span></div><div class="brand-sub">Insights</div></div></div><div class="demo-utilities"><span class="synthetic-label">Synthetic demo</span><details id="demo-controls"><summary>Explore demo</summary><div class="demo-controls-panel"><nav aria-label="Main navigation">${renderNavigation()}</nav>${renderScenarioSelector()}${renderHeading(a)}</div></details></div></header>${message ? `<p class="global-status" role="status">${esc(message)}</p>` : ""}${page !== "Overview" || showPlan ? `<h1>${showPlan ? "Your plan" : esc(page)}</h1>` : ""}${renderContent(a)}<details class="demo-about"><summary>About this demo</summary>${renderSources()}${renderFooter()}</details></main></div>`;
+  return `<div class="shell ${privateSlice ? "" : "public-shell"}">
     ${renderSidebar(a)}
     <main id="main" tabindex="-1">
       ${renderScenarioSelector()}
@@ -844,6 +892,15 @@ function render() {
   }
   const a = analyze(data, periodDays);
   $("#app").innerHTML = renderShell(a);
+  if (!privateSlice) bindTimeline(timelineState, render);
+  const demoControls = $("#demo-controls");
+  if (demoControls)
+    demoControls.onkeydown = (event) => {
+      if (event.key === "Escape") {
+        demoControls.open = false;
+        demoControls.querySelector("summary").focus();
+      }
+    };
   document.querySelectorAll("[data-chart]").forEach(
     (b) =>
       (b.onclick = () => {
@@ -928,10 +985,14 @@ function render() {
   $("#period").onchange = (e) => {
     periodDays = Number(e.target.value);
     render();
+    $("#demo-controls > summary")?.focus({ preventScroll: true });
   };
   if ($("#scenario"))
     $("#scenario").onchange = (e) => {
-      data = scenario(e.target.value);
+      data = demoScenario(e.target.value);
+      timelineState.week = null;
+      timelineState.anchor = null;
+      periodDays = data.id === "returning" ? 56 : 28;
       decision = null;
       history = [];
       reviewing = null;
@@ -939,6 +1000,7 @@ function render() {
       message = "";
       if (data.id === "followup") seedFollowup();
       render();
+      $("#demo-controls > summary")?.focus({ preventScroll: true });
     };
   $("#edit-plan").onclick = () => {
     showPlan = true;
@@ -1003,7 +1065,7 @@ function render() {
           reason:
             f.get("reason") ||
             (f.get("choice") === "accept"
-              ? dashboard(data, a, history).next
+              ? (a.timelineAssessment?.next ?? dashboard(data, a, history).next)
               : ""),
           effective: f.get("effective"),
           review: f.get("review"),

@@ -150,7 +150,7 @@ export function windowMetrics(data, from, to) {
   };
 }
 export function analyze(data, periodDays = 28) {
-  if (![14, 28, 90, 180].includes(periodDays))
+  if (![14, 28, 56, 90, 180].includes(periodDays))
     throw Error("Unsupported reporting window");
   const end = shift(data.clock, -1),
     current = windowMetrics(data, shift(end, 1 - periodDays), end),

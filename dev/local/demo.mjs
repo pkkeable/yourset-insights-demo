@@ -1,8 +1,8 @@
+import { verifyTimeline, chooseDemo, visitView } from "./timeline-demo.mjs";
 // Synthetic portfolio walkthrough; no private service or configuration is used.
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { realpathSync } from "node:fs";
-import { mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { createServer } from "../../server.mjs";
@@ -65,7 +65,11 @@ try {
     ? await chromium.connect(service.endpoint, {
         exposeNetwork: new URL(baseUrl).host,
       })
-    : await chromium.launch();
+    : await chromium.launch(
+        process.env.YOURSET_CHROMIUM_PATH
+          ? { executablePath: process.env.YOURSET_CHROMIUM_PATH }
+          : {},
+      );
   const page = await browser.newPage({
       viewport: { width: 1536, height: 1600 },
     }),
@@ -84,44 +88,25 @@ try {
     if (event.type() === "error") errors.push(event.text());
   });
   await page.goto(baseUrl);
-  await page.locator('[data-card="recovery"]').waitFor();
-  await page.evaluate(() => document.fonts.ready);
-  assert.equal(await page.locator(".overview-trends > [data-card]").count(), 6);
-  if (process.argv.includes("--screenshots")) {
-    await mkdir(new URL("../../docs/images/", import.meta.url), {
-      recursive: true,
-    });
-    const trendBounds = await page.locator(".overview-trends").boundingBox();
-    await page.screenshot({
-      clip: {
-        x: 0,
-        y: 0,
-        width: 1536,
-        height: Math.ceil(trendBounds.y + trendBounds.height + 24),
-      },
-      path: fileURLToPath(
-        new URL("../../docs/images/overview.png", import.meta.url),
-      ),
-    });
-  }
-  for (const [id] of SCENARIOS) {
-    await page.locator("#scenario").selectOption(id);
-    assert.equal(
-      await page.locator(".overview-trends > [data-card]").count(),
-      6,
-    );
+  await verifyTimeline(page, {
+    screenshots: process.argv.includes("--screenshots"),
+  });
+  for (const [id] of [["returning"], ...SCENARIOS]) {
+    await chooseDemo(page, "#scenario", id);
+    assert.equal(await page.locator("[data-track]").count(), 2);
     for (const view of [
+      "Strength",
       "Training",
       "Nutrition / Weight",
       "Investigations",
       "Overview",
     ]) {
-      await page.locator(`button[data-page="${view}"]`).first().click();
+      await visitView(page, view);
       assert(!/NaN|undefined/.test(await page.locator("main").innerText()));
     }
   }
-  await page.locator("#scenario").selectOption("slowdown");
-  await page.locator('button[data-page="Investigations"]').first().click();
+  await chooseDemo(page, "#scenario", "slowdown");
+  await visitView(page, "Investigations");
   await page
     .locator("#decision-form [name=reason]")
     .fill("Review movement and food logging before changing targets.");
@@ -140,26 +125,27 @@ try {
     .filter({ hasText: "Review saved" })
     .waitFor();
   assert.equal(await page.locator("[data-review-id]").count(), 0);
-  await page.locator("#scenario").selectOption("slowdown");
-  await page.locator('button[data-page="Overview"]').first().click();
+  await chooseDemo(page, "#scenario", "slowdown");
+  await visitView(page, "Overview");
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const [id] of SCENARIOS) {
-    await page.locator("#scenario").selectOption(id);
+  for (const [id] of [["returning"], ...SCENARIOS]) {
+    await chooseDemo(page, "#scenario", id);
     assert(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth + 1,
       ),
     );
   }
-  await page.locator("#scenario").selectOption("slowdown");
-  await page.locator('[data-chart="recovery"][data-metric="hrv"]').focus();
+  await chooseDemo(page, "#scenario", "slowdown");
+  await page.locator("#add-metric").focus();
+  await page.keyboard.press("Enter");
+  await page.locator('[data-add-metric="hrv"]').focus();
   await page.keyboard.press("Enter");
   assert.equal(
-    await page
-      .locator('[data-chart="recovery"][data-metric="hrv"]')
-      .getAttribute("aria-pressed"),
+    await page.locator('[data-add-metric="hrv"]').getAttribute("aria-pressed"),
     "true",
   );
+  await page.keyboard.press("Escape");
   assert.deepEqual(errors, []);
   assert.deepEqual(external, []);
   assert.deepEqual(failed, []);
@@ -172,7 +158,7 @@ try {
     );
   }
   console.log(
-    `PASS ${hostedUrl ? "hosted" : built ? "static build" : "source"} public demo: ten scenarios across all views, six cards, complete decision/review story, narrow-screen overflow, keyboard selector and no external requests or browser errors.`,
+    `PASS ${hostedUrl ? "hosted" : built ? "static build" : "source"} public demo: eleven scenarios, shared metric tracks, complete decision/review story, narrow-screen overflow, keyboard selector and no external requests or browser errors.`,
   );
 } finally {
   await browser?.close();

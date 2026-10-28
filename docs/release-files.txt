@@ -3,6 +3,7 @@
 .githooks/pre-push
 .github/workflows/privacy.yml
 .gitignore
+.gitleaksignore
 .prettierignore
 AGENTS.md
 ENGINEERING.md
@@ -29,6 +30,7 @@ dev/local/run.mjs
 dev/local/static.mjs
 dev/local/supabase/.gitignore
 dev/local/supabase/config.toml
+dev/local/timeline-demo.mjs
 docs/AUTH_CONTRACT.md
 docs/CAPABILITIES.md
 docs/COMMAND_CONTRACTS.md
@@ -42,7 +44,10 @@ docs/RUNBOOK.md
 docs/SOURCES.md
 docs/SUPPORTED_PLATFORM.md
 docs/adr/0001-write-and-session-boundary.md
+docs/images/expanded.png
+docs/images/mobile.png
 docs/images/overview.png
+docs/images/strength-split.png
 docs/release-files.txt
 package-lock.json
 package.json
@@ -73,7 +78,9 @@ spikes/auth-transaction/supabase/config.toml
 spikes/auth-transaction/test.mjs
 src/metrics.mjs
 src/overview.mjs
+src/returning-lifter.mjs
 src/scenarios.mjs
+src/timeline.mjs
 supabase/migrations/20260912162736_private_landing.sql
 tests/adapters.test.mjs
 tests/auth-session.test.mjs
@@ -91,6 +98,7 @@ tests/product.test.mjs
 tests/server.test.mjs
 tests/test_collector.py
 tests/test_delivery.py
+tests/timeline.test.mjs
 vercel.json
 web/app.mjs
 web/assets/DM-Sans-OFL.txt
@@ -101,3 +109,4 @@ web/assets/yourset-logo.svg
 web/index.html
 web/overview-view.mjs
 web/style.css
+web/timeline-view.mjs

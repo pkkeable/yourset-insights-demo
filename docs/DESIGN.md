@@ -11,7 +11,7 @@ The visual reference does not supply any personal fixture values. All records, d
 
 ## Approved overview baseline: September 21, 2026
 
-Status: approved design, implemented in the v0.1.0 public release. The six-card overview remains the layout reference; current implementation evidence is in [release checks](RELEASE_CHECKS.md). This section supersedes the earlier four-outcome-card layout and the requirement to show the full execution table and findings before expansion. Approval fixes the information hierarchy for now; it does not certify implementation, data completeness, source delivery or publication readiness.
+Status: approved design, implemented in the v0.1.0 public release. The six-card overview remains the private local layout reference; the shared timeline below supersedes it for the synthetic public demo; current implementation evidence is in [release checks](RELEASE_CHECKS.md). This section supersedes the earlier four-outcome-card layout and the requirement to show the full execution table and findings before expansion. Approval fixes the information hierarchy for now; it does not certify implementation, data completeness, source delivery or publication readiness.
 
 ### Page hierarchy
 
@@ -70,3 +70,21 @@ A suggested next step is not an active adjustment. Date fields do not silently c
 All rendered measurements use the US presentation contract, including charts, strength-history tables, investigative prose and reassessment. Source status is not repeated as a wall of green badges; dated coverage sits beside the affected answer. No pictured owner identity, target or connection timestamp is used as a fixture.
 
 Durable private history, live onboarding and source delivery, complete plan configuration and real-use verification remain separate implementation requirements.
+
+## Shared-timeline public demo: October 28, 2026
+
+The owner-approved shared timeline supersedes the six-card overview for the synthetic public demo only. It retains Classic Dark, the original mark and bundled fonts. Weight and Strength are initially selected; the searchable catalogue exposes all 16 metrics with removable selections and no cap. Each track has independent labeled units and scale, aligned completed Monday–Sunday buckets and the same selected-week marker. The sticky inspection control distinguishes latest complete from historical selection and opens actual daily records, with source/revision/dated-plan details disclosed there. Empty and incomplete data never become invented observations.
+
+The private local overview retains its existing presentation. The desktop, picker/records and mobile reference boards were supplied after the initial prototype. The public shell now follows their borderless tracks, apricot pills, compact navigation, grouped catalogue, separate chosen-target line and daily table/detail hierarchy. The functional sticky week selector and scenario/window controls are retained. Illustrative protein observations in the boards are not substituted for missing fixture evidence.
+
+### Tightened review hierarchy
+
+The final local design pass groups secondary demo/navigation controls under Explore demo. Outcome, selected metrics, shared-week inspection and records remain primary. Track values and coverage remain visible; calculation/lift selection and per-metric records use Details. Interpretation and about/privacy disclosures retain their full content. Empty decision chrome is removed until a decision exists; active decisions and review actions remain visible. Release verification remains separate from visual approval.
+
+### Supplied review feedback
+
+Desktop plot proportions are narrower/deeper and vertical gaps are reduced without smaller text. The headline names the matched lifts it summarizes; the chart labels Strength and names each overlaid lift. The public overview exposes one evidence-and-decision route; detailed period calculations live within Investigations. Explicit five-track desktop/mobile checks supplement the larger-selection checks, including historical inspection and records return.
+
+### Selected missing data and strength comparison
+
+A selected metric with no eligible observations in the entire window uses a compact status row with Details; it stays selected and discoverable. Partial-week gaps keep their chart. Strength overlays separate exact-matched lift groups on a shared lb scale with distinct colors/line styles and values. No composite score is calculated. Strength Details exposes each group's weekly maxima and the actual three-week assessment conditions. A dedicated Strength tab can split the same groups into separately labeled charts, preserving week inspection. Default overview selections remain Weight and Strength.

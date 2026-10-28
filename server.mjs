@@ -3,6 +3,9 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL(".", import.meta.url));
 const routes = {
+  "/src/returning-lifter.mjs": "src/returning-lifter.mjs",
+  "/src/timeline.mjs": "src/timeline.mjs",
+  "/web/timeline-view.mjs": "web/timeline-view.mjs",
   "/web/assets/yourset-logo.svg": "web/assets/yourset-logo.svg",
   "/web/assets/dm-sans.woff2": "web/assets/dm-sans.woff2",
   "/web/assets/jetbrains-mono.woff2": "web/assets/jetbrains-mono.woff2",

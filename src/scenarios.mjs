@@ -204,6 +204,34 @@ export function scenario(id = "slowdown") {
 export function addSyntheticFollowup(data, decision) {
   const start =
     data.clock > decision.effective ? data.clock : decision.effective;
+  if (data.id === "returning") {
+    const end = shift(data.clock, -1),
+      from = shift(end, -13);
+    const offset = Math.round(
+      (Date.parse(start) - Date.parse(from)) / 86400000,
+    );
+    const records = data.records
+      .filter((r) => r.date >= from && r.date <= end)
+      .map((r) => ({
+        ...r,
+        id: `followup:${start}:${r.id}`,
+        date: shift(r.date, offset),
+        fetchedAt: `${shift(start, 14)}T00:00:00Z`,
+        ...(r.sessionId
+          ? { sessionId: `followup:${start}:${r.sessionId}` }
+          : {}),
+        value: r.kind === "weight" ? r.value - 0.45359237 : r.value,
+      }));
+    return {
+      ...data,
+      clock: shift(start, 14),
+      records: [...data.records, ...records],
+      trainingCoverage: {
+        ...data.trainingCoverage,
+        lift: { ...data.trainingCoverage.lift, to: shift(start, 13) },
+      },
+    };
+  }
   const offset = Math.round(
     (Date.parse(start) - Date.parse("2026-06-01")) / 86400000,
   );

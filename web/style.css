@@ -1424,3 +1424,1354 @@ h1 {
     margin-left: 0;
   }
 }
+
+/* Shared weekly tracks: independent units, identical horizontal coordinates. */
+.timeline {
+  margin: 28px 0;
+}
+.metric-toolbar,
+.track-heading,
+.track-foot,
+.dialog-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.metric-toolbar h2 {
+  margin: 6px 0 16px;
+}
+.metric-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 20px;
+}
+.metric-pills button {
+  border-radius: 24px;
+  padding: 7px 14px;
+  min-height: 36px;
+  font-size: 14px;
+}
+.metric-pills span {
+  margin-left: 8px;
+}
+.week-control {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #202022;
+  border: 1px solid #55555b;
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 5px 20px #0005;
+}
+.week-control label {
+  font-size: 14px;
+  color: var(--blue);
+}
+.week-control label strong {
+  display: block;
+  color: var(--text);
+  margin-top: 4px;
+}
+.week-control > div {
+  display: flex;
+  gap: 8px;
+}
+.week-control select {
+  max-width: 250px;
+}
+.timeline-note,
+.track-unit,
+.track-foot,
+.target-note {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.metric-tracks {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card);
+}
+.metric-track {
+  padding: 24px 28px;
+  border-bottom: 1px solid #444448;
+}
+.metric-track:last-child {
+  border-bottom: 0;
+}
+.track-heading h3 {
+  margin: 0 0 7px;
+  font-size: 20px;
+}
+.track-reading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  white-space: nowrap;
+}
+.track-reading strong {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 28px;
+  font-weight: 500;
+}
+.track-reading span {
+  color: var(--muted);
+  font-size: 13px;
+}
+.track-chart {
+  width: 100%;
+  height: 155px;
+  display: block;
+  overflow: visible;
+  margin-top: 14px;
+}
+.track-chart text {
+  fill: #b9b9bf;
+  font-size: 12px;
+  font-family: "JetBrains Mono", monospace;
+}
+.track-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+.track-dot {
+  fill: var(--accent);
+}
+.selected-dot {
+  fill: var(--accent);
+  stroke: var(--base);
+  stroke-width: 2;
+}
+.week-marker {
+  stroke: var(--blue);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+.chart-grid {
+  stroke: #55555b;
+}
+.track-empty {
+  padding: 30px 0;
+  color: var(--muted);
+}
+.anchor-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+.anchor-label select {
+  max-width: 100%;
+}
+.metric-track details {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.metric-track summary {
+  cursor: pointer;
+  padding: 10px 0;
+}
+.metric-track table {
+  min-width: 0;
+}
+.metric-track th,
+.metric-track td {
+  white-space: normal;
+}
+.metric-track td button {
+  font-size: 13px;
+}
+dialog {
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid #66666c;
+  border-radius: 16px;
+  padding: 28px;
+  width: min(620px, calc(100% - 24px));
+  max-height: 85dvh;
+}
+dialog::backdrop {
+  background: #000b;
+}
+dialog h2 {
+  margin: 6px 0 18px;
+}
+dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+dialog input,
+dialog select {
+  width: 100%;
+}
+.catalogue {
+  margin: 24px 0;
+}
+.catalogue h3 {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+.catalogue-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 12px 14px;
+  text-align: left;
+}
+.catalogue-item small {
+  display: block;
+  color: #c0c0c6;
+  margin-top: 5px;
+  font-size: 14px;
+}
+.catalogue-item[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+.catalogue-item > span:last-child {
+  color: var(--accent);
+  font-size: 14px;
+  white-space: nowrap;
+}
+[hidden] {
+  display: none !important;
+}
+.daily-observation {
+  border-top: 1px solid #55555b;
+  padding: 18px 0;
+  font-size: 14px;
+}
+.daily-observation > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.daily-observation p,
+.daily-observation dl {
+  color: #b9b9bf;
+  line-height: 1.6;
+}
+.daily-observation dd {
+  overflow-wrap: anywhere;
+  margin: 4px 0 14px;
+}
+@media (max-width: 700px) {
+  .metric-track {
+    padding: 20px 16px;
+  }
+  .metric-toolbar {
+    align-items: flex-start;
+  }
+  .metric-toolbar h2 {
+    font-size: 20px;
+  }
+  .metric-toolbar button {
+    white-space: nowrap;
+    padding: 10px;
+  }
+  .metric-pills button {
+    min-height: 44px;
+  }
+  .week-control {
+    padding: 10px 12px;
+    display: block;
+  }
+  .week-control label strong {
+    display: inline;
+    margin-left: 5px;
+  }
+  .week-control > div {
+    margin-top: 8px;
+  }
+  .week-control select {
+    min-width: 0;
+    flex: 1;
+    width: 50%;
+  }
+  .week-control button {
+    font-size: 14px;
+    white-space: nowrap;
+    padding: 10px;
+  }
+  .track-heading {
+    align-items: flex-start;
+  }
+  .track-unit {
+    display: block;
+    max-width: 220px;
+  }
+  .track-reading strong {
+    font-size: 24px;
+  }
+  .track-chart {
+    height: 130px;
+  }
+  .track-chart text {
+    font-size: 22px;
+  }
+  .track-foot {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .anchor-label {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .anchor-label select {
+    width: 100%;
+  }
+  dialog {
+    padding: 20px;
+  }
+  .micro {
+    font-size: 14px;
+  }
+}
+.plot-wrap {
+  position: relative;
+  margin-top: 18px;
+}
+.plot-wrap .track-chart {
+  height: 120px;
+  margin: 0;
+}
+.plot-high,
+.plot-low {
+  position: absolute;
+  left: 0;
+  color: #b9b9bf;
+  font:
+    13px "JetBrains Mono",
+    monospace;
+}
+.plot-high {
+  top: 4px;
+}
+.plot-low {
+  bottom: 28px;
+}
+.plot-dates {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 5.625% 0 6.875%;
+  font:
+    13px "JetBrains Mono",
+    monospace;
+  color: #b9b9bf;
+}
+.plot-missing {
+  position: absolute;
+  left: 8%;
+  top: 35px;
+  right: 8%;
+  font-size: 14px;
+  color: var(--muted);
+}
+@media (max-width: 700px) {
+  .plot-wrap .track-chart {
+    height: 110px;
+  }
+  .plot-high,
+  .plot-low,
+  .plot-dates {
+    font-size: 12px;
+  }
+  .plot-high {
+    top: 0;
+  }
+  .plot-low {
+    bottom: 25px;
+  }
+  .heading-row small,
+  .scenario-label,
+  .eyebrow,
+  .footer {
+    font-size: 12px;
+  }
+}
+
+/* Approved boards: a quiet shell and compact, borderless aligned tracks. */
+.public-shell {
+  display: block;
+  max-width: 1320px;
+  margin: auto;
+  padding: 32px 42px;
+}
+.public-shell aside {
+  position: static;
+  height: auto;
+  padding: 0;
+  border: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.public-shell aside nav {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+}
+.public-shell .aside-bottom {
+  display: none;
+}
+.public-shell main {
+  padding: 0;
+}
+.public-shell .topbar {
+  margin: 18px 0 0;
+  padding: 10px 0;
+  border: 0;
+}
+.public-shell .heading-row {
+  margin: 0 0 24px;
+  justify-content: flex-end;
+}
+.public-shell .heading-row > div:first-child {
+  display: none;
+}
+.public-shell .header-controls {
+  align-items: end;
+}
+.public-shell .overview-brief {
+  display: block;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 24px 0;
+}
+.public-shell .overview-brief .eyebrow,
+.public-shell .brief-next {
+  display: none;
+}
+.public-shell .overview-brief h2 {
+  font-size: 32px;
+  line-height: 1.3;
+}
+.public-shell .overview-brief p {
+  max-width: none;
+}
+.public-shell .timeline {
+  margin-top: 0;
+}
+.public-shell .metric-pills {
+  margin: 20px 0;
+}
+.public-shell .metric-pills button {
+  border: 0;
+  background: #302519;
+  color: var(--accent);
+  font-weight: 650;
+  padding: 9px 18px;
+}
+.public-shell .metric-pills #add-metric {
+  background: var(--card);
+  color: var(--text);
+}
+.public-shell .week-control {
+  background: var(--base);
+  border-width: 0 0 1px;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 10px 0;
+}
+.public-shell .week-control label {
+  color: var(--text);
+}
+.public-shell .week-control label strong {
+  display: inline;
+  margin-left: 6px;
+}
+.public-shell .metric-tracks {
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+.public-shell .metric-track {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  column-gap: 24px;
+  padding: 24px 0;
+  border: 0;
+  position: relative;
+}
+.public-shell .track-heading {
+  grid-column: 1;
+  grid-row: 1;
+  display: block;
+}
+.public-shell .track-heading h3 {
+  font-size: 17px;
+}
+.public-shell .track-unit {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.public-shell .track-reading {
+  align-items: flex-start;
+  flex-direction: row;
+  gap: 5px;
+  margin-top: 6px;
+}
+.public-shell .track-reading strong {
+  font:
+    16px "DM Sans",
+    sans-serif;
+  color: #c0c0c6;
+}
+.public-shell .track-reading span {
+  font-size: 14px;
+}
+.public-shell .plot-wrap {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  margin: 0;
+}
+.public-shell .plot-wrap .track-chart {
+  height: 90px;
+}
+.public-shell .plot-low {
+  bottom: 24px;
+}
+.public-shell .track-foot {
+  grid-column: 2;
+  font-size: 12px;
+}
+.public-shell .track-foot button {
+  font-size: 12px;
+  padding: 4px 0;
+  min-height: 32px;
+}
+.public-shell .metric-track > details {
+  grid-column: 2;
+  margin: 0;
+  font-size: 12px;
+}
+.public-shell .anchor-label {
+  grid-column: 1;
+  font-size: 12px;
+  display: block;
+  margin: 8px 0 0;
+}
+.public-shell .anchor-label select {
+  width: 100%;
+  font-size: 12px;
+  padding: 6px;
+}
+.public-shell .anchor-scope {
+  grid-column: 1;
+  font-size: 12px;
+  margin: 6px 0;
+}
+.public-shell .target-note {
+  grid-column: 2;
+  font-size: 12px;
+}
+.target-line {
+  fill: none;
+  stroke: #a1a1a6;
+  stroke-width: 1;
+  stroke-dasharray: 5 5;
+}
+.public-shell .week-marker {
+  stroke: #b9b9bf;
+  stroke-dasharray: none;
+  stroke-width: 1;
+}
+.public-shell .selected-dot {
+  fill: white;
+  stroke: white;
+}
+.public-shell .timeline-conclusion {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+.public-shell .timeline-conclusion p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.public-shell .timeline-conclusion h2 {
+  font-size: 22px;
+}
+.public-shell .adjustment {
+  margin-top: 24px;
+}
+.public-shell dialog {
+  background: var(--base);
+  width: min(900px, calc(100% - 24px));
+}
+.public-shell #metric-picker {
+  max-width: 720px;
+}
+.public-shell .catalogue-item {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  padding: 18px 0;
+}
+.public-shell .catalogue-item:hover {
+  background: var(--card);
+}
+.public-shell .catalogue h3 {
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.records-week-table {
+  margin: 24px 0;
+}
+.records-week-table table {
+  min-width: 560px;
+  width: 100%;
+}
+.records-week-table caption {
+  text-align: left;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.inspected-day {
+  background: #302519;
+}
+.records-week-table button {
+  border: 0;
+  background: none;
+  padding: 4px;
+}
+.daily-observation > div > strong:last-child {
+  font-size: 28px;
+}
+.daily-observation > div {
+  flex-direction: column;
+}
+@media (max-width: 700px) {
+  .public-shell {
+    padding: 24px 20px;
+  }
+  .public-shell aside {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .public-shell aside nav {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .public-shell aside nav button {
+    font-size: 12px;
+    padding: 8px;
+  }
+  .public-shell .topbar {
+    margin: 8px 0;
+  }
+  .public-shell .heading-row {
+    margin-bottom: 20px;
+  }
+  .public-shell .overview-brief h2 {
+    font-size: 28px;
+  }
+  .public-shell .metric-track {
+    display: block;
+    padding: 26px 0;
+  }
+  .public-shell .track-heading h3 {
+    font-size: 19px;
+  }
+  .public-shell .track-unit {
+    font-size: 14px;
+  }
+  .public-shell .track-reading {
+    margin: 8px 0;
+  }
+  .public-shell .plot-wrap {
+    margin: 22px 0 8px;
+  }
+  .public-shell .plot-wrap .track-chart {
+    height: 120px;
+  }
+  .public-shell .track-foot,
+  .public-shell .metric-track > details,
+  .public-shell .target-note {
+    font-size: 14px;
+  }
+  .public-shell .track-foot button {
+    font-size: 14px;
+    min-height: 44px;
+  }
+  .public-shell .anchor-label,
+  .public-shell .anchor-label select,
+  .public-shell .anchor-scope {
+    font-size: 14px;
+  }
+  .public-shell .week-control label {
+    font-size: 13px;
+  }
+  .public-shell dialog {
+    padding: 20px;
+    max-height: 92dvh;
+  }
+  .records-week-table {
+    overflow-x: auto;
+  }
+}
+.public-shell .plot-wrap {
+  align-self: start;
+}
+.public-shell .plot-low {
+  top: 72px;
+  bottom: auto;
+}
+.public-shell .metric-track:not(:last-child) .plot-dates {
+  visibility: hidden;
+}
+.public-shell .metric-track > details .anchor-label {
+  max-width: 400px;
+}
+@media (min-width: 701px) {
+  .public-shell .topbar {
+    display: inline-flex;
+    width: 62%;
+    vertical-align: bottom;
+    margin: 20px 0;
+    padding-right: 20px;
+  }
+  .public-shell .heading-row {
+    display: inline-flex;
+    width: 38%;
+    vertical-align: bottom;
+    margin: 20px 0;
+  }
+}
+@media (max-width: 700px) {
+  .public-shell .plot-low {
+    top: 96px;
+  }
+  .public-shell .metric-track .plot-dates {
+    visibility: visible;
+  }
+}
+.plot-wrap {
+  --plot-height: 120px;
+}
+.public-shell .plot-wrap {
+  --plot-height: 90px;
+}
+.selected-point {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+@media (max-width: 700px) {
+  .public-shell .plot-wrap {
+    --plot-height: 120px;
+  }
+  .public-shell .metric-track:not(:last-child) .plot-dates {
+    visibility: visible;
+  }
+}
+@media (min-width: 701px) {
+  .public-shell .topbar {
+    width: calc(62% - 4px);
+  }
+  .public-shell .heading-row {
+    width: calc(38% - 4px);
+  }
+}
+
+/* Final hierarchy: outcome, inspection, tracks, then the explicit decision. */
+.refined-shell {
+  max-width: 1240px;
+  padding: 36px 48px;
+}
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 48px;
+}
+.demo-utilities {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.synthetic-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+#demo-controls {
+  position: relative;
+}
+#demo-controls > summary {
+  cursor: pointer;
+  padding: 12px 0;
+  font-size: 14px;
+  color: #c0c0c6;
+}
+.demo-controls-panel {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 20;
+  width: 360px;
+  background: var(--card);
+  border: 1px solid #55555b;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 12px 40px #0008;
+}
+.refined-shell .demo-controls-panel nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.refined-shell .demo-controls-panel nav button {
+  font-size: 13px;
+  padding: 10px;
+}
+.refined-shell .demo-controls-panel .topbar,
+.refined-shell .demo-controls-panel .heading-row {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 20px 0 0;
+}
+.refined-shell .demo-controls-panel .demo {
+  display: none;
+}
+.refined-shell .demo-controls-panel label {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  font-size: 13px;
+}
+.refined-shell .demo-controls-panel .header-controls {
+  display: grid;
+  width: 100%;
+  gap: 16px;
+}
+.refined-shell .demo-controls-panel select {
+  width: 100%;
+  max-width: 100%;
+}
+.refined-shell .overview-brief {
+  margin: 0 0 26px;
+}
+.refined-shell .overview-brief h2 {
+  font-size: 32px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+.refined-shell .overview-brief p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 10px;
+}
+.refined-shell .metric-pills {
+  margin: 0 0 24px;
+  gap: 8px;
+}
+.refined-shell .week-control {
+  border: 0;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  gap: 8px;
+}
+.refined-shell .week-control > div {
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+}
+.refined-shell .week-control select {
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+  padding-left: 4px;
+  max-width: 230px;
+}
+.refined-shell #daily-records {
+  background: none;
+  border: 0;
+  color: var(--accent);
+  padding-right: 0;
+}
+.refined-shell .metric-track {
+  grid-template-columns: 170px minmax(0, 1fr);
+  column-gap: 30px;
+  padding: 14px 0 18px;
+}
+.refined-shell .track-heading {
+  padding-top: 6px;
+}
+.refined-shell .track-heading h3 {
+  font-size: 16px;
+  margin-bottom: 7px;
+}
+.refined-shell .track-reading {
+  margin: 0 0 5px;
+}
+.refined-shell .track-unit {
+  font-size: 12px;
+  color: var(--muted);
+}
+.refined-shell .plot-wrap {
+  grid-row: 1;
+  --plot-height: 90px;
+}
+.refined-shell .metric-track > .track-details {
+  grid-column: 1 / -1;
+  font-size: 13px;
+}
+.refined-shell .track-details > summary {
+  width: max-content;
+  min-height: 32px;
+  padding: 6px 0;
+  color: var(--muted);
+}
+.refined-shell .track-details[open] {
+  padding: 12px 16px;
+  margin-top: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.refined-shell .target-note {
+  margin: 4px 0;
+  grid-column: 2;
+  font-size: 12px;
+}
+.refined-shell .timeline-note {
+  margin: 4px 0 24px 200px;
+  font-size: 12px;
+}
+.refined-shell .decision-prompt {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.refined-shell .timeline-conclusion {
+  margin-top: 16px;
+  padding-top: 14px;
+}
+.refined-shell .timeline-conclusion h2 {
+  margin: 8px 0;
+  font-size: 22px;
+}
+.refined-shell .timeline-conclusion > details {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 6px 0;
+}
+.refined-shell .timeline-conclusion > details summary {
+  cursor: pointer;
+  min-height: 36px;
+  padding: 8px 0;
+}
+.refined-shell .full-debrief {
+  margin-top: 20px;
+  padding-top: 16px;
+}
+.demo-about {
+  color: var(--muted);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding: 16px 0;
+}
+.demo-about > summary {
+  cursor: pointer;
+}
+.refined-shell dialog .dialog-heading {
+  position: sticky;
+  top: -28px;
+  background: var(--base);
+  padding: 12px 0;
+  z-index: 2;
+}
+.refined-shell .records-week-table td,
+.refined-shell .records-week-table th {
+  padding: 8px 10px;
+}
+.refined-shell .records-week-table {
+  margin: 18px 0;
+}
+.refined-shell .daily-observation {
+  margin-top: 16px;
+}
+@media (max-width: 700px) {
+  .refined-shell {
+    padding: 24px 20px;
+  }
+  .demo-header {
+    margin-bottom: 32px;
+    align-items: flex-start;
+  }
+  .demo-utilities {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0;
+  }
+  .synthetic-label {
+    font-size: 10px;
+  }
+  #demo-controls > summary {
+    font-size: 13px;
+  }
+  .demo-controls-panel {
+    width: min(350px, calc(100vw - 40px));
+  }
+  .refined-shell .overview-brief h2 {
+    font-size: 28px;
+  }
+  .refined-shell .week-control {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 8px 0;
+    margin-bottom: 8px;
+  }
+  .refined-shell .week-control label {
+    width: 100%;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .refined-shell .week-control > div {
+    margin: 0;
+    width: 100%;
+  }
+  .refined-shell .week-control select {
+    width: auto;
+    max-width: 210px;
+    flex: none;
+    padding-left: 0;
+  }
+  .refined-shell .metric-track {
+    padding: 18px 0;
+  }
+  .refined-shell .track-heading h3 {
+    font-size: 18px;
+  }
+  .refined-shell .track-unit {
+    font-size: 13px;
+  }
+  .refined-shell .plot-wrap {
+    --plot-height: 110px;
+    margin: 16px 0 0;
+  }
+  .refined-shell .plot-wrap .track-chart {
+    height: 110px;
+  }
+  .refined-shell .plot-low {
+    top: 88px;
+  }
+  .refined-shell .track-details > summary {
+    min-height: 44px;
+    font-size: 13px;
+  }
+  .refined-shell .timeline-note {
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+  .refined-shell .target-note {
+    font-size: 13px;
+  }
+  .refined-shell .decision-prompt {
+    display: block;
+  }
+  .refined-shell .timeline-conclusion h2 {
+    font-size: 20px;
+  }
+  .refined-shell dialog .dialog-heading {
+    top: -20px;
+  }
+}
+@media (min-width: 701px) {
+  .refined-shell .records-week-table button {
+    min-height: 32px;
+  }
+}
+.record-day-select {
+  display: none !important;
+}
+@media (max-width: 700px) {
+  .record-day-select {
+    display: flex !important;
+    margin-top: 16px;
+  }
+  .records-week-table {
+    display: none;
+  }
+}
+
+/* Review refinement: balanced chart proportions, tighter vertical rhythm. */
+.refined-shell {
+  max-width: 1080px;
+  padding: 28px 32px;
+}
+.refined-shell .demo-header {
+  margin-bottom: 28px;
+}
+.refined-shell .overview-brief {
+  margin-bottom: 20px;
+}
+.refined-shell .metric-pills {
+  margin-bottom: 14px;
+}
+.refined-shell .week-control {
+  margin-bottom: 12px;
+  padding: 6px 0;
+}
+.refined-shell .metric-track {
+  grid-template-columns: 180px minmax(0, 1fr);
+  column-gap: 24px;
+  padding: 10px 0 16px;
+}
+.refined-shell .plot-wrap {
+  --plot-height: 122px;
+  grid-row: 1 / span 2;
+}
+.refined-shell .plot-wrap .track-chart {
+  height: var(--plot-height);
+}
+.refined-shell .plot-low {
+  top: calc(var(--plot-height) * 0.8);
+}
+.refined-shell .metric-track > .track-details {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: start;
+}
+.refined-shell .metric-track > .track-details[open] {
+  grid-column: 1 / -1;
+  grid-row: 3;
+}
+.refined-shell .target-note {
+  grid-column: 2;
+  grid-row: 3;
+}
+.refined-shell .target-note:has(+ .track-details[open]) {
+  grid-row: 4;
+}
+.refined-shell .timeline-note {
+  margin: 0 0 16px 204px;
+}
+.refined-shell .timeline-conclusion {
+  margin-top: 8px;
+  padding-top: 10px;
+}
+@media (max-width: 700px) {
+  .refined-shell {
+    padding: 20px;
+  }
+  .refined-shell .demo-header {
+    margin-bottom: 20px;
+  }
+  .refined-shell .overview-brief {
+    margin-bottom: 16px;
+  }
+  .refined-shell .overview-brief p {
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+  .refined-shell .metric-pills {
+    margin-bottom: 12px;
+  }
+  .refined-shell .week-control {
+    margin-bottom: 2px;
+  }
+  .refined-shell .metric-track {
+    padding: 10px 0 12px;
+  }
+  .refined-shell .track-heading {
+    padding-top: 0;
+  }
+  .refined-shell .plot-wrap {
+    --plot-height: 116px;
+    margin: 8px 0 0;
+  }
+  .refined-shell .plot-low {
+    top: calc(var(--plot-height) * 0.8);
+  }
+  .refined-shell .track-details > summary {
+    padding: 6px 0;
+  }
+  .refined-shell .timeline-note {
+    margin: 4px 0 16px;
+  }
+}
+@media (max-width: 700px) {
+  .refined-shell .week-control > div {
+    margin-top: 6px;
+  }
+  .refined-shell .week-control label {
+    line-height: 1.5;
+  }
+}
+
+/* Empty selected metrics remain visible without occupying a chart. */
+.refined-shell .empty-track {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+.refined-shell .empty-track h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.empty-track h3 span {
+  color: var(--muted);
+  font-weight: 400;
+}
+.refined-shell .empty-track > .track-details {
+  margin: 0;
+}
+.refined-shell .empty-track > .track-details[open] {
+  flex-basis: 100%;
+}
+.strength-legend {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.strength-legend li {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 13px;
+}
+.strength-legend strong {
+  display: block;
+  color: var(--muted);
+  font-weight: 400;
+  margin-top: 2px;
+}
+.strength-swatch {
+  display: inline-block;
+  width: 18px;
+  border-top: 2px solid var(--series-color);
+  flex-shrink: 0;
+}
+.refined-shell .strength-overlay {
+  --plot-height: 180px;
+}
+.refined-shell .strength-details[open] {
+  grid-column: 1 / -1;
+}
+.strength-details table {
+  min-width: 700px;
+}
+.strength-details caption {
+  color: var(--muted);
+  padding: 12px 0;
+  text-align: left;
+}
+.strength-details p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.strength-details label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.strength-details select {
+  max-width: 100%;
+}
+.strength-view-controls {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.strength-view-controls [aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.refined-shell .strength-split {
+  display: block;
+}
+.strength-split > .track-heading .strength-legend {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.split-lifts section {
+  margin: 20px 0;
+}
+.split-lifts h4 {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.refined-shell .split-lifts .plot-wrap {
+  --plot-height: 150px;
+}
+.refined-shell .split-lifts .plot-dates {
+  visibility: visible;
+}
+.refined-shell .strength-overlay .plot-dates {
+  visibility: visible;
+}
+@media (max-width: 700px) {
+  .strength-legend {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
+  .refined-shell .empty-track {
+    display: block;
+  }
+  .refined-shell .empty-track h3 {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .refined-shell .strength-overlay {
+    --plot-height: 180px;
+    margin-top: 12px;
+  }
+  .refined-shell .strength-overlay .track-chart {
+    height: 180px;
+  }
+  .strength-details .table-wrap {
+    overflow-x: auto;
+  }
+}
+.strength-details .table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.strength-details {
+  min-width: 0;
+}
+.split-lifts .track-line {
+  stroke: var(--lift-color, var(--accent));
+}
+.split-lifts .track-dot {
+  fill: var(--lift-color, var(--accent));
+}
